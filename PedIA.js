@@ -45,7 +45,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
         // Mostrar todos los apartados sin los campos (los apartados estarán vacíos inicialmente)
         allApartados.forEach(apartado => {
-            apartado.style.display = 'block';
+            apartado.style.display = 'block'; // Mostrar los apartados al iniciar la escucha
         });
     });
 
@@ -58,7 +58,14 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         Object.keys(sections).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
-                document.getElementById(sectionToId(section)).style.display = 'block'; // Mostrar el apartado completo
+                const sectionElement = document.getElementById(sectionToId(section));
+                sectionElement.style.display = 'block'; // Mostrar el apartado completo
+
+                // Desplegar todos los campos de ese apartado
+                sections[currentSection].forEach(field => {
+                    document.getElementById(field).parentElement.style.display = 'block';
+                });
+
                 resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
             }
         });
@@ -107,3 +114,4 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
+
