@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="PedIA.css"> <!-- Enlace con el archivo CSS -->
+    <title>PedIA - Speech To Text</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <p class="header">PedIA Speech To Text</p>
+        <div class="settings">
+            <div class="language">
+                <p>Language :</p>
+                <select id="language">
+                    <option value="es-ES">Español</option>
+                    <option value="de-DE">Alemán</option>
+                    <option value="en-US">Inglés</option>
+                    <option value="pt-BR">Portugués</option>
+                    <option value="ru-RU">Ruso</option>
+                </select>
+            </div>
+        </div>
+        <div class="separator"></div>
+        <button class="btn record">
+            <div class="icon">
+                <i class='bx bx-microphone'></i>
+                <i class='bx bx-loader bx-spin'></i>
+            </div>
+            <p>Start Listening</p>
+        </button>
+
+        <p>Result :</p>
+        <div class="result" spellcheck="false">
+            <p class="resultText"></p>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="buttons">
+            <button class="btn clear">
+                Clear
+            </button>
+            <button class="btn download" disabled>Download</button>
+        </div>
+
+        <div class="sections">
+            <h3>Clasificación de la Historia Clínica</h3>
+            <div id="classification"></div>
+        </div>
+
+    </div>
+
+    <script src="PedIA.js"></script> <!-- Enlace con el archivo JavaScript -->
+</body>
+
+</html>
+
+
+    </div>
+
+    <script src="PedIA.js"></script> <!-- Enlace con el archivo JavaScript -->
+</body>
+
+</html>
+
