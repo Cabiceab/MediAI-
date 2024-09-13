@@ -1,4 +1,4 @@
-const recordButton = document.querySelector('.btn.record');
+const recordButton = document.getElementById('startListening');
 const clearButton = document.querySelector('.btn.clear');
 const downloadButton = document.querySelector('.btn.download');
 const resultText = document.querySelector('.resultText');
@@ -57,32 +57,5 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     recognition.onerror = (event) => {
         console.error('Error en el reconocimiento de voz:', event.error);
         resultText.innerText = `Error: ${event.error}`;
-        recordButton.querySelector('p').innerText = 'Start Listening';
-    };
-
-    // En caso de finalizar el reconocimiento
-    recognition.onend = () => {
-        console.log('Reconocimiento de voz finalizado.');
-        recordButton.querySelector('p').innerText = 'Start Listening'; // Restablece el texto del botón
-    };
-}
-
-// Toggle Instructions Visibility
-instructionsToggle.addEventListener('click', () => {
-    if (instructions.style.display === 'none' || instructions.style.display === '') {
-        instructions.style.display = 'block';
-        instructionsToggle.innerText = 'Ocultar Instrucciones';
-    } else {
-        instructions.style.display = 'none';
-        instructionsToggle.innerText = 'Ver Instrucciones';
-    }
-});
-
-// Botón para limpiar
-clearButton.addEventListener('click', () => {
-    resultText.innerText = '';
-    classificationDiv.innerHTML = '';
-    currentField = null;
-    downloadButton.disabled = true;
-});
+        recordButton.querySelector('p
 
