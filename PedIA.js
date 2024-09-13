@@ -4,17 +4,30 @@ const downloadButton = document.querySelector('.btn.download');
 const resultText = document.querySelector('.resultText');
 const classificationDiv = document.getElementById('classification');
 const languageSelect = document.getElementById('language');
+const instructionsToggle = document.getElementById('instructionsToggle');
+const instructions = document.getElementById('instructions');
 
-let currentField = null; // This variable will hold the current field we are trying to fill
+let currentField = null; // Variable para capturar el campo activo
 
-// Setup for Speech Recognition API
+// Toggle Instructions Visibility
+instructionsToggle.addEventListener('click', () => {
+    if (instructions.style.display === 'none') {
+        instructions.style.display = 'block';
+        instructionsToggle.innerText = 'Ocultar Instrucciones';
+    } else {
+        instructions.style.display = 'none';
+        instructionsToggle.innerText = 'Ver Instrucciones';
+    }
+});
+
+// Configuración del reconocimiento de voz
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 recognition.continuous = true;
 recognition.interimResults = false;
-recognition.lang = 'es-ES';  // Default language is set to Spanish
+recognition.lang = 'es-ES';
 
-// Field mapping
+// Campos médicos
 const fields = {
     'nombre': 'Nombre',
     'identificación': 'Identificación',
@@ -28,13 +41,38 @@ const fields = {
     'enfermedad actual': 'Enfermedad Actual',
 };
 
-// Event listener for the start button
+// Evento para el botón "Start Listening"
 recordButton.addEventListener('click', () => {
     recognition.lang = languageSelect.value;
     recognition.start();
     console.log('Recognition started');
 });
 
-// When speech is recognized
-recognition.onresult =
+// Captura el resultado de la transcripción
+recognition.onresult = (event) => {
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+    }
+    resultText.innerText = transcript;
 
+    // Si se está esperando un valor para un campo, captúralo
+    if (currentField) {
+        classificationDiv.innerHTML += `<p><strong>${fields[currentField]}:</strong> ${transcript}</p>`;
+        currentField = null;
+    } else {
+        Object.keys(fields).forEach((field) => {
+            if (transcript.toLowerCase().includes(field)) {
+                currentField = field;
+                resultText.innerText = `Campo detectado: ${fields[field]}. Ahora, di el valor.`;
+            }
+        });
+    }
+
+    downloadButton.disabled = false;
+};
+
+// Botón para limpiar
+clearButton.addEventListener('click', () => {
+    resultText.innerText = '';
+   
