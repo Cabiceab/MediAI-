@@ -1,16 +1,18 @@
 // Variables de los botones e inputs
 const recordButton = document.getElementById('startListening');
-const clearButton = document.querySelector('.btn.clear');
 const resultText = document.querySelector('.resultText');
-const languageSelect = document.getElementById('language');
 let currentField = null; // Campo actual que se llenará
 let currentSection = null; // Apartado actual que se desplegará
 
 // Apartados y campos esperados
-const fields = {
-    "datos de identificación": ["nombre", "identificación", "edad"],
+const sections = {
+    "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad"],
     "motivo de consulta": ["motivo"],
-    "enfermedad actual": ["enfermedad"]
+    "enfermedad actual": ["enfermedad"],
+    "antecedentes": ["personales", "prenatales"],
+    "triángulo de aproximación pediátrico": ["neurológico", "circulatorio", "respiratoria"],
+    "variables vitales": ["frecuencia cardiaca", "frecuencia respiratoria", "saturación de oxígeno"]
+    // Más apartados y campos...
 };
 
 // Verifica la compatibilidad del navegador para SpeechRecognition
@@ -25,10 +27,8 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
     // Iniciar el reconocimiento de voz
     recordButton.addEventListener('click', () => {
-        recognition.lang = languageSelect.value;
         recognition.start();
-        console.log('Reconocimiento de voz iniciado...');
-        recordButton.querySelector('p').innerText = 'Escuchando...';
+        resultText.innerText = 'Por favor, menciona el apartado que deseas llenar.';
     });
 
     // Captura el resultado del reconocimiento
@@ -37,17 +37,17 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         resultText.innerText = transcript;
 
         // Si el usuario menciona un apartado, lo desplegamos
-        Object.keys(fields).forEach(section => {
+        Object.keys(sections).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
                 document.getElementById(sectionToId(section)).style.display = 'block';
-                resultText.innerText = `Se ha detectado el apartado: ${section}. Ahora menciona el campo.`;
+                resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
             }
         });
 
-        // Si se menciona un campo, lo llenamos
+        // Si se menciona un campo dentro del apartado, lo llenamos
         if (currentSection) {
-            fields[currentSection].forEach(field => {
+            sections[currentSection].forEach(field => {
                 if (transcript.includes(field)) {
                     currentField = field;
                     resultText.innerText = `Campo detectado: ${field}. Ahora menciona el valor.`;
@@ -62,19 +62,15 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
                 currentField = null; // Reinicia el campo
             }
         }
-
-        recordButton.querySelector('p').innerText = 'Start Listening';
     };
 
     recognition.onerror = (event) => {
         console.error('Error en el reconocimiento de voz:', event.error);
         resultText.innerText = `Error: ${event.error}`;
-        recordButton.querySelector('p').innerText = 'Start Listening';
     };
 
     recognition.onend = () => {
         console.log('Reconocimiento de voz finalizado.');
-        recordButton.querySelector('p').innerText = 'Start Listening';
     };
 }
 
@@ -83,10 +79,4 @@ function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
 
-// Limpiar los resultados
-clearButton.addEventListener('click', () => {
-    resultText.innerText = '';
-    currentField = null;
-    document.querySelectorAll('.apartado').forEach(apartado => apartado.style.display = 'none');
-});
 
