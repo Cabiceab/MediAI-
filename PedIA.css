@@ -94,3 +94,24 @@ body {
     color: #888;
 }
 
+/* Para desplegar campos visibles */
+.apartado .campos {
+    display: none; /* Ocultar campos dentro de apartados */
+}
+
+h3 {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f1f1f1;
+    margin: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.campos {
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.campos .campo {
+    padding: 5px;
+}
