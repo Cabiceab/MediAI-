@@ -43,9 +43,13 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         // Mostrar la lista de apartados cuando el usuario haga clic en "Start Listening"
         apartadoLista.style.display = 'block'; 
 
-        // Mostrar todos los apartados sin los campos (los apartados estarán vacíos inicialmente)
+        // Mostrar todos los apartados sin los campos (inicialmente vacíos)
         allApartados.forEach(apartado => {
-            apartado.style.display = 'block';
+            apartado.style.display = 'block'; // Mostrar solo los títulos de los apartados
+            const fields = apartado.querySelectorAll('.campo');
+            fields.forEach(field => {
+                field.style.display = 'none'; // Ocultar los campos hasta que se mencionen
+            });
         });
     });
 
@@ -58,7 +62,11 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         Object.keys(sections).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
-                document.getElementById(sectionToId(section)).style.display = 'block'; // Mostrar el apartado completo
+                const sectionDiv = document.getElementById(sectionToId(section));
+                const fields = sectionDiv.querySelectorAll('.campo');
+                fields.forEach(field => {
+                    field.style.display = 'block'; // Mostrar todos los campos del apartado seleccionado
+                });
                 resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
             }
         });
@@ -103,4 +111,8 @@ instructionsToggle.addEventListener('click', () => {
     }
 });
 
+// Función auxiliar para convertir nombre de sección a ID
+function sectionToId(section) {
+    return section.replace(/\s+/g, '');
+}
 
