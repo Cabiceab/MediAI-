@@ -46,6 +46,10 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         // Mostrar todos los apartados sin los campos (los apartados estarán vacíos inicialmente)
         allApartados.forEach(apartado => {
             apartado.style.display = 'block'; // Mostrar los apartados al iniciar la escucha
+            // Ocultar los campos de cada apartado
+            apartado.querySelectorAll('.campo').forEach(campo => {
+                campo.style.display = 'none';
+            });
         });
     });
 
@@ -114,4 +118,3 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
-
