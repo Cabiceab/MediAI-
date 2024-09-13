@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,52 +8,82 @@
     <link rel="stylesheet" href="PedIA.css">
     <title>MediAI - Speech to Text</title>
 </head>
+
 <body>
 
     <div class="container">
-        <div class="header">MediAI Speech To Text</div>
+        <header class="header">
+            <h1>Medi<span class="highlight">AI</span> Speech To Text</h1>
+            <p class="credit">Software desarrollado por <strong>Camilo Avila B.</strong></p>
+        </header>
 
-        <div class="settings">
-            <div class="language">
-                <label for="language">Language:</label>
-                <select id="language">
-                    <option value="es-ES">Español</option>
-                    <option value="en-US">English</option>
-                    <option value="de-DE">Deutsch</option>
-                    <option value="pt-PT">Português</option>
-                    <option value="ru-RU">Русский</option>
-                </select>
+        <!-- Tabs Section -->
+        <div class="tabs">
+            <button class="tab-btn" onclick="showInstructions()">Instrucciones</button>
+            <button class="tab-btn active" onclick="showMain()">Main</button>
+        </div>
+
+        <!-- Instructions Section -->
+        <div id="instructions" class="instructions">
+            <h3>Instrucciones:</h3>
+            <ul>
+                <li>Primero, di el nombre del ítem (por ejemplo, "Nombre").</li>
+                <li>Después de que se reconozca el ítem, di el valor correspondiente (por ejemplo, "Camilo Avila").</li>
+                <li>El sistema mostrará automáticamente los ítems y sus valores mientras hablas.</li>
+                <li>Presiona el botón "Clear" para reiniciar el sistema.</li>
+                <li>Puedes descargar la transcripción al finalizar.</li>
+            </ul>
+        </div>
+
+        <!-- Main Section -->
+        <div id="main" class="main-content">
+            <div class="settings">
+                <div class="language">
+                    <label for="language">Idioma:</label>
+                    <select id="language">
+                        <option value="es-ES">Español</option>
+                        <option value="en-US">English</option>
+                        <option value="de-DE">Deutsch</option>
+                        <option value="pt-PT">Português</option>
+                        <option value="ru-RU">Русский</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <button class="btn record">
+                <div class="icon">
+                    <i class='bx bx-microphone'></i>
+                    <i class='bx bx-loader bx-spin'></i>
+                </div>
+                <p>Start Listening</p>
+            </button>
+
+            <div class="result">
+                <h3>Transcripción</h3>
+                <p class="resultText"></p>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="buttons">
+                <button class="btn clear">Clear</button>
+                <button class="btn download" disabled>Download</button>
+            </div>
+
+            <div class="classification">
+                <h3>Clasificación de la Historia Clínica</h3>
+                <div id="classification"></div>
             </div>
         </div>
-
-        <div class="separator"></div>
-
-        <button class="btn record">
-            <div class="icon">
-                <i class='bx bx-microphone'></i>
-                <i class='bx bx-loader bx-spin'></i>
-            </div>
-            <p>Start Listening</p>
-        </button>
-
-        <div class="result">
-            <p class="resultText"></p>
-        </div>
-
-        <div class="separator"></div>
-
-        <div class="buttons">
-            <button class="btn clear">Clear</button>
-            <button class="btn download" disabled>Download</button>
-        </div>
-
-        <div class="classification">
-            <h3>Clasificación de la Historia Clínica</h3>
-            <div id="classification"></div>
-        </div>
-
     </div>
+
+    <footer class="footer">
+        <p>Software desarrollado por Camilo Avila B.</p>
+    </footer>
 
     <script src="PedIA.js"></script>
 </body>
+
 </html>
