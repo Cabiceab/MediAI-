@@ -40,5 +40,53 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         Object.keys(fields).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
-               
+                document.getElementById(sectionToId(section)).style.display = 'block';
+                resultText.innerText = `Se ha detectado el apartado: ${section}. Ahora menciona el campo.`;
+            }
+        });
+
+        // Si se menciona un campo, lo llenamos
+        if (currentSection) {
+            fields[currentSection].forEach(field => {
+                if (transcript.includes(field)) {
+                    currentField = field;
+                    resultText.innerText = `Campo detectado: ${field}. Ahora menciona el valor.`;
+                }
+            });
+
+            // Llenado del campo con el valor proporcionado por el usuario
+            if (currentField) {
+                let value = transcript.replace(currentField, '').trim();
+                document.getElementById(currentField).innerText = value;
+                resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
+                currentField = null; // Reinicia el campo
+            }
+        }
+
+        recordButton.querySelector('p').innerText = 'Start Listening';
+    };
+
+    recognition.onerror = (event) => {
+        console.error('Error en el reconocimiento de voz:', event.error);
+        resultText.innerText = `Error: ${event.error}`;
+        recordButton.querySelector('p').innerText = 'Start Listening';
+    };
+
+    recognition.onend = () => {
+        console.log('Reconocimiento de voz finalizado.');
+        recordButton.querySelector('p').innerText = 'Start Listening';
+    };
+}
+
+// Función auxiliar para convertir nombre de sección a ID
+function sectionToId(section) {
+    return section.replace(/\s+/g, '');
+}
+
+// Limpiar los resultados
+clearButton.addEventListener('click', () => {
+    resultText.innerText = '';
+    currentField = null;
+    document.querySelectorAll('.apartado').forEach(apartado => apartado.style.display = 'none');
+});
 
