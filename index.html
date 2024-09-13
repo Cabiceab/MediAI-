@@ -3,193 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediAI - Speech to Text</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="PedIA.css">
-    <title>MediAI - Speech to Text</title>
 </head>
 <body>
 
-    <div class="container">
-        <header class="header">
-            <h1>Medi<span class="highlight">AI</span> Speech To Text</h1>
-            <button id="instructionsToggle" class="instructions-btn">Ver Instrucciones</button>
-        </header>
+    <div class="main-container">
+        <div class="speech-card">
+            <header class="header">
+                <h1>Medi<span class="highlight">AI</span> Speech To Text</h1>
+                <button id="instructionsToggle" class="instructions-btn">Ver Instrucciones</button>
+            </header>
 
-        <!-- Manual de Instrucciones (Oculto por defecto) -->
-        <div id="instructions" class="instructions" style="display: none;">
-            <h3>Instrucciones:</h3>
-            <ul>
-                <li>1. Presiona el botón "Start Listening" para comenzar el reconocimiento de voz.</li>
-                <li>2. El sistema mostrará la lista de apartados disponibles.</li>
-                <li>3. Menciona el nombre del apartado que deseas llenar.</li>
-                <li>4. Luego menciona el nombre de cada campo dentro del apartado, seguido del valor que deseas asignar.</li>
-                <li>5. Presiona "Clear" para reiniciar el proceso.</li>
-            </ul>
+            <!-- Manual de Instrucciones (Oculto por defecto) -->
+            <div id="instructions" class="instructions" style="display: none;">
+                <h3>Instrucciones:</h3>
+                <ul>
+                    <li>1. Presiona el botón "Start Listening" para comenzar el reconocimiento de voz.</li>
+                    <li>2. El sistema mostrará la lista de apartados disponibles.</li>
+                    <li>3. Menciona el nombre del apartado que deseas llenar.</li>
+                    <li>4. Luego menciona el nombre de cada campo dentro del apartado, seguido del valor que deseas asignar.</li>
+                    <li>5. Presiona "Clear" para reiniciar el proceso.</li>
+                </ul>
+            </div>
+
+            <!-- Botón para empezar a escuchar -->
+            <button id="startListening" class="btn record">
+                <div class="icon">
+                    <i class='bx bx-microphone'></i>
+                </div>
+                <p>Start Listening</p>
+            </button>
+
+            <!-- Área de transcripción -->
+            <div class="result">
+                <h3>Transcripción</h3>
+                <p class="resultText">Por favor, menciona un apartado para continuar.</p>
+            </div>
+
+            <!-- Lista de apartados (Oculta por defecto) -->
+            <div id="apartadoLista" class="apartado-lista" style="display: none;">
+                <h3>Lista de Apartados</h3>
+                <ul>
+                    <li>Datos de Identificación</li>
+                    <li>Motivo de Consulta</li>
+                    <li>Enfermedad Actual</li>
+                    <li>Antecedentes</li>
+                    <li>Triángulo de Aproximación Pediátrico</li>
+                    <li>Variables Vitales</li>
+                    <li>Medidas Antropométricas</li>
+                    <li>Índices Antropométricos</li>
+                    <li>Examen Físico</li>
+                    <li>Paraclínicos</li>
+                    <li>Análisis</li>
+                    <li>Impresión Diagnóstica</li>
+                    <li>Plan</li>
+                </ul>
+            </div>
+
+            <!-- Apartados y campos (Ocultos hasta ser mencionados) -->
+            <div id="apartados">
+
+                <!-- DATOS DE IDENTIFICACIÓN -->
+                <div id="datosIdentificacion" class="apartado" style="display: none;">
+                    <h3>DATOS DE IDENTIFICACIÓN</h3>
+                    <div class="campo"><label>Nombre:</label> <span id="nombre"></span></div>
+                    <div class="campo"><label>Identificación:</label> <span id="identificacion"></span></div>
+                    <div class="campo"><label>Edad:</label> <span id="edad"></span></div>
+                    <div class="campo"><label>Fecha de Nacimiento:</label> <span id="fecha_nacimiento"></span></div>
+                    <div class="campo"><label>Escolaridad:</label> <span id="escolaridad"></span></div>
+                    <div class="campo"><label>EPS:</label> <span id="eps"></span></div>
+                    <div class="campo"><label>Natural:</label> <span id="natural"></span></div>
+                    <div class="campo"><label>Residente:</label> <span id="residente"></span></div>
+                    <div class="campo"><label>Procedente:</label> <span id="procedente"></span></div>
+                    <div class="campo"><label>Dirección:</label> <span id="direccion"></span></div>
+                    <div class="campo"><label>Teléfono:</label> <span id="telefono"></span></div>
+                    <div class="campo"><label>Nombre del Acompañante:</label> <span id="nombre_acompanante"></span></div>
+                    <div class="campo"><label>Parentesco:</label> <span id="parentesco"></span></div>
+                    <div class="campo"><label>Edad del Acompañante:</label> <span id="edad_acompanante"></span></div>
+                    <div class="campo"><label>Ocupación:</label> <span id="ocupacion"></span></div>
+                    <div class="campo"><label>Confiabilidad:</label> <span id="confiabilidad"></span></div>
+                    <div class="campo"><label>Fecha de Ingreso:</label> <span id="fecha_ingreso"></span></div>
+                </div>
+
+                <!-- MOTIVO DE CONSULTA -->
+                <div id="motivoConsulta" class="apartado" style="display: none;">
+                    <h3>MOTIVO DE CONSULTA</h3>
+                    <div class="campo"><label>Motivo:</label> <span id="motivo"></span></div>
+                </div>
+
+                <!-- ENFERMEDAD ACTUAL -->
+                <div id="enfermedadActual" class="apartado" style="display: none;">
+                    <h3>ENFERMEDAD ACTUAL</h3>
+                    <div class="campo"><label>Descripción:</label> <span id="enfermedad"></span></div>
+                </div>
+
+                <!-- ANTECEDENTES -->
+                <div id="antecedentes" class="apartado" style="display: none;">
+                    <h3>ANTECEDENTES</h3>
+                    <div class="campo"><label>Personales:</label> <span id="personales"></span></div>
+                    <div class="campo"><label>Prenatales:</label> <span id="prenatales"></span></div>
+                    <div class="campo"><label>Patológicos:</label> <span id="patologicos"></span></div>
+                    <div class="campo"><label>Hospitalizaciones:</label> <span id="hospitalizaciones"></span></div>
+                    <div class="campo"><label>Farmacológicos:</label> <span id="farmacologicos"></span></div>
+                    <div class="campo"><label>Quirúrgicos:</label> <span id="quirurgicos"></span></div>
+                    <div class="campo"><label>Transfusionales:</label> <span id="transfusionales"></span></div>
+                    <div class="campo"><label>Traumáticos:</label> <span id="traumaticos"></span></div>
+                    <div class="campo"><label>Alérgicos:</label> <span id="alergicos"></span></div>
+                </div>
+
+                <!-- TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO -->
+                <div id="trianguloPediatrico" class="apartado" style="display: none;">
+                    <h3>TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO</h3>
+                    <div class="campo"><label>Neurológico:</label> <span id="neurologico"></span></div>
+                    <div class="campo"><label>Circulatorio:</label> <span id="circulatorio"></span></div>
+                    <div class="campo"><label>Respiratorio:</label> <span id="respiratorio"></span></div>
+                </div>
+
+                <!-- VARIABLES VITALES -->
+                <div id="variablesVitales" class="apartado" style="display: none;">
+                    <h3>VARIABLES VITALES</h3>
+                    <div class="campo"><label>Frecuencia Cardíaca:</label> <span id="frecuencia_cardiaca"></span></div>
+                    <div class="campo"><label>Frecuencia Respiratoria:</label> <span id="frecuencia_respiratoria"></span></div>
+                    <div class="campo"><label>Saturación de Oxígeno:</label> <span id="saturacion_oxigeno"></span></div>
+                    <div class="campo"><label>Temperatura:</label> <span id="temperatura"></span></div>
+                    <div class="campo"><label>Tensión Arterial:</label> <span id="tension_arterial"></span></div>
+                </div>
+
+                <!-- MEDIDAS ANTROPOMÉTRICAS -->
+                <div id="medidasAntropometricas" class="apartado" style="display: none;">
+                    <h3>MEDIDAS ANTROPOMÉTRICAS</h3>
+                    <div class="campo"><label>Peso:</label> <span id="peso"></span></div>
+                    <div class="campo"><label>Talla:</label> <span id="talla"></span></div>
+                </div>
+
+                <!-- ÍNDICES ANTROPOMÉTRICOS -->
+                <div id="indicesAntropometricos" class="apartado" style="display: none;">
+                    <h3>ÍNDICES ANTROPOMÉTRICOS</h3>
+                    <div class="campo"><label>Talla/Edad:</label> <span id="talla_edad"></span></div>
+                    <div class="campo"><label>IMC/Edad:</label> <span id="imc_edad"></span></div>
+                    <div class="campo"><label>Peso/Talla:</label> <span id="peso_talla"></span></div>
+                    <div class="campo"><label>Peso/Edad:</label> <span id="peso_edad"></span></div>
+                </div>
+
+                <!-- EXAMEN FÍSICO -->
+                <div id="examenFisico" class="apartado" style="display: none;">
+                    <h3>EXAMEN FÍSICO</h3>
+                    <div class="campo"><label>Neurológico:</label> <span id="neurologico_examen"></span></div>
+                    <div class="campo"><label>Cabeza:</label> <span id="cabeza"></span></div>
+                    <div class="campo"><label>Cuello:</label> <span id="cuello"></span></div>
+                    <div class="campo"><label>Tórax:</label> <span id="torax"></span></div>
+                    <div class="campo"><label>Abdomen:</label> <span id="abdomen"></span></div>
+                    <div class="campo"><label>Genitourinario:</label> <span id="genitourinario"></span></div>
+                    <div class="campo"><label>Extremidades:</label> <span id="extremidades"></span></div>
+                    <div class="campo"><label>Piel:</label> <span id="piel"></span></div>
+                </div>
+
+                <!-- PARACLÍNICOS -->
+                <div id="paraclinicos" class="apartado" style="display: none;">
+                    <h3>PARACLÍNICOS</h3>
+                    <div class="campo"><label>Laboratorios:</label> <span id="laboratorios"></span></div>
+                </div>
+
+                <!-- ANÁLISIS -->
+                <div id="analisis" class="apartado" style="display: none;">
+                    <h3>ANÁLISIS</h3>
+                    <div class="campo"><label>Diagnóstico Nutricional:</label> <span id="diagnostico_nutricional"></span></div>
+                </div>
+
+                <!-- IMPRESIÓN DIAGNÓSTICA -->
+                <div id="impresionDiagnostica" class="apartado" style="display: none;">
+                    <h3>IMPRESIÓN DIAGNÓSTICA</h3>
+                    <div class="campo"><label>Impresión Diagnóstica:</label> <span id="impresion_diagnostica"></span></div>
+                </div>
+
+                <!-- PLAN -->
+                <div id="plan" class="apartado" style="display: none;">
+                    <h3>PLAN</h3>
+                    <div class="campo"><label>Estancia:</label> <span id="estancia"></span></div>
+                    <div class="campo"><label>Dieta:</label> <span id="dieta"></span></div>
+                    <div class="campo"><label>Farmacológicos:</label> <span id="farmacologicos_plan"></span></div>
+                    <div class="campo"><label>Paraclínicos:</label> <span id="paraclinicos_plan"></span></div>
+                    <div class="campo"><label>Cuidados de Enfermería:</label> <span id="cuidados_enfermeria"></span></div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p>Software desarrollado por Camilo Avila B.</p>
+            </footer>
         </div>
-
-        <!-- Botón para empezar a escuchar -->
-        <button id="startListening" class="btn record">
-            <div class="icon">
-                <i class='bx bx-microphone'></i>
-            </div>
-            <p>Start Listening</p>
-        </button>
-
-        <div class="result">
-            <h3>Transcripción</h3>
-            <p class="resultText">Por favor, menciona el apartado que deseas llenar.</p>
-        </div>
-
-        <!-- Lista de apartados (Oculta por defecto) -->
-        <div id="apartadoLista" class="apartado" style="display: none;">
-            <h3>Lista de Apartados</h3>
-            <ul>
-                <li>Datos de Identificación</li>
-                <li>Motivo de Consulta</li>
-                <li>Enfermedad Actual</li>
-                <li>Antecedentes</li>
-                <li>Triángulo de Aproximación Pediátrico</li>
-                <li>Variables Vitales</li>
-                <li>Medidas Antropométricas</li>
-                <li>Índices Antropométricos</li>
-                <li>Examen Físico</li>
-                <li>Paraclínicos</li>
-                <li>Análisis</li>
-                <li>Impresión Diagnóstica</li>
-                <li>Plan</li>
-            </ul>
-        </div>
-
-        <!-- Apartados y campos (Ocultos hasta ser mencionados) -->
-        <div id="apartados">
-
-            <!-- DATOS DE IDENTIFICACIÓN -->
-            <div id="datosIdentificacion" class="apartado" style="display: none;">
-                <h3>DATOS DE IDENTIFICACIÓN</h3>
-                <div class="campo"><label>Nombre:</label> <span id="nombre"></span></div>
-                <div class="campo"><label>Identificación:</label> <span id="identificacion"></span></div>
-                <div class="campo"><label>Edad:</label> <span id="edad"></span></div>
-                <div class="campo"><label>Fecha de Nacimiento:</label> <span id="fecha_nacimiento"></span></div>
-                <div class="campo"><label>Escolaridad:</label> <span id="escolaridad"></span></div>
-                <div class="campo"><label>EPS:</label> <span id="eps"></span></div>
-                <div class="campo"><label>Natural:</label> <span id="natural"></span></div>
-                <div class="campo"><label>Residente:</label> <span id="residente"></span></div>
-                <div class="campo"><label>Procedente:</label> <span id="procedente"></span></div>
-                <div class="campo"><label>Dirección:</label> <span id="direccion"></span></div>
-                <div class="campo"><label>Teléfono:</label> <span id="telefono"></span></div>
-                <div class="campo"><label>Nombre del Acompañante:</label> <span id="nombre_acompanante"></span></div>
-                <div class="campo"><label>Parentesco:</label> <span id="parentesco"></span></div>
-                <div class="campo"><label>Edad del Acompañante:</label> <span id="edad_acompanante"></span></div>
-                <div class="campo"><label>Ocupación:</label> <span id="ocupacion"></span></div>
-                <div class="campo"><label>Confiabilidad:</label> <span id="confiabilidad"></span></div>
-                <div class="campo"><label>Fecha de Ingreso:</label> <span id="fecha_ingreso"></span></div>
-            </div>
-
-            <!-- MOTIVO DE CONSULTA -->
-            <div id="motivoConsulta" class="apartado" style="display: none;">
-                <h3>MOTIVO DE CONSULTA</h3>
-                <div class="campo"><label>Motivo:</label> <span id="motivo"></span></div>
-            </div>
-
-            <!-- ENFERMEDAD ACTUAL -->
-            <div id="enfermedadActual" class="apartado" style="display: none;">
-                <h3>ENFERMEDAD ACTUAL</h3>
-                <div class="campo"><label>Descripción:</label> <span id="enfermedad"></span></div>
-            </div>
-
-            <!-- ANTECEDENTES -->
-            <div id="antecedentes" class="apartado" style="display: none;">
-                <h3>ANTECEDENTES</h3>
-                <div class="campo"><label>Personales:</label> <span id="personales"></span></div>
-                <div class="campo"><label>Prenatales:</label> <span id="prenatales"></span></div>
-                <div class="campo"><label>Patológicos:</label> <span id="patologicos"></span></div>
-                <div class="campo"><label>Hospitalizaciones:</label> <span id="hospitalizaciones"></span></div>
-                <div class="campo"><label>Farmacológicos:</label> <span id="farmacologicos"></span></div>
-                <div class="campo"><label>Quirúrgicos:</label> <span id="quirurgicos"></span></div>
-                <div class="campo"><label>Transfusionales:</label> <span id="transfusionales"></span></div>
-                <div class="campo"><label>Traumáticos:</label> <span id="traumaticos"></span></div>
-                <div class="campo"><label>Alérgicos:</label> <span id="alergicos"></span></div>
-            </div>
-
-            <!-- TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO -->
-            <div id="trianguloPediatrico" class="apartado" style="display: none;">
-                <h3>TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO</h3>
-                <div class="campo"><label>Neurológico:</label> <span id="neurologico"></span></div>
-                <div class="campo"><label>Circulatorio:</label> <span id="circulatorio"></span></div>
-                <div class="campo"><label>Respiratorio:</label> <span id="respiratorio"></span></div>
-            </div>
-
-            <!-- VARIABLES VITALES -->
-            <div id="variablesVitales" class="apartado" style="display: none;">
-                <h3>VARIABLES VITALES</h3>
-                <div class="campo"><label>Frecuencia Cardíaca:</label> <span id="frecuencia_cardiaca"></span></div>
-                <div class="campo"><label>Frecuencia Respiratoria:</label> <span id="frecuencia_respiratoria"></span></div>
-                <div class="campo"><label>Saturación de Oxígeno:</label> <span id="saturacion_oxigeno"></span></div>
-                <div class="campo"><label>Temperatura:</label> <span id="temperatura"></span></div>
-                <div class="campo"><label>Tensión Arterial:</label> <span id="tension_arterial"></span></div>
-            </div>
-
-            <!-- MEDIDAS ANTROPOMÉTRICAS -->
-            <div id="medidasAntropometricas" class="apartado" style="display: none;">
-                <h3>MEDIDAS ANTROPOMÉTRICAS</h3>
-                <div class="campo"><label>Peso:</label> <span id="peso"></span></div>
-                <div class="campo"><label>Talla:</label> <span id="talla"></span></div>
-            </div>
-
-            <!-- ÍNDICES ANTROPOMÉTRICOS -->
-            <div id="indicesAntropometricos" class="apartado" style="display: none;">
-                <h3>ÍNDICES ANTROPOMÉTRICOS</h3>
-                <div class="campo"><label>Talla/Edad:</label> <span id="talla_edad"></span></div>
-                <div class="campo"><label>IMC/Edad:</label> <span id="imc_edad"></span></div>
-                <div class="campo"><label>Peso/Talla:</label> <span id="peso_talla"></span></div>
-                <div class="campo"><label>Peso/Edad:</label> <span id="peso_edad"></span></div>
-            </div>
-
-            <!-- EXAMEN FÍSICO -->
-            <div id="examenFisico" class="apartado" style="display: none;">
-                <h3>EXAMEN FÍSICO</h3>
-                <div class="campo"><label>Neurológico:</label> <span id="neurologico_examen"></span></div>
-                <div class="campo"><label>Cabeza:</label> <span id="cabeza"></span></div>
-                <div class="campo"><label>Cuello:</label> <span id="cuello"></span></div>
-                <div class="campo"><label>Tórax:</label> <span id="torax"></span></div>
-                <div class="campo"><label>Abdomen:</label> <span id="abdomen"></span></div>
-                <div class="campo"><label>Genitourinario:</label> <span id="genitourinario"></span></div>
-                <div class="campo"><label>Extremidades:</label> <span id="extremidades"></span></div>
-                <div class="campo"><label>Piel:</label> <span id="piel"></span></div>
-            </div>
-
-            <!-- PARACLÍNICOS -->
-            <div id="paraclinicos" class="apartado" style="display: none;">
-                <h3>PARACLÍNICOS</h3>
-                <div class="campo"><label>Laboratorios:</label> <span id="laboratorios"></span></div>
-            </div>
-
-            <!-- ANÁLISIS -->
-            <div id="analisis" class="apartado" style="display: none;">
-                <h3>ANÁLISIS</h3>
-                <div class="campo"><label>Diagnóstico Nutricional:</label> <span id="diagnostico_nutricional"></span></div>
-            </div>
-
-            <!-- IMPRESIÓN DIAGNÓSTICA -->
-            <div id="impresionDiagnostica" class="apartado" style="display: none;">
-                <h3>IMPRESIÓN DIAGNÓSTICA</h3>
-                <div class="campo"><label>Impresión Diagnóstica:</label> <span id="impresion_diagnostica"></span></div>
-            </div>
-
-            <!-- PLAN -->
-            <div id="plan" class="apartado" style="display: none;">
-                <h3>PLAN</h3>
-                <div class="campo"><label>Estancia:</label> <span id="estancia"></span></div>
-                <div class="campo"><label>Dieta:</label> <span id="dieta"></span></div>
-                <div class="campo"><label>Farmacológicos:</label> <span id="farmacologicos_plan"></span></div>
-                <div class="campo"><label>Paraclínicos:</label> <span id="paraclinicos_plan"></span></div>
-                <div class="campo"><label>Cuidados de Enfermería:</label> <span id="cuidados_enfermeria"></span></div>
-            </div>
-        </div>
-
-        <footer class="footer">
-            <p>Software desarrollado por Camilo Avila B.</p>
-        </footer>
+    </div>
 
     <script src="PedIA.js"></script>
 </body>
