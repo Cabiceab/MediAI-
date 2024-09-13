@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,10 +63,44 @@
                 <button class="btn download" disabled>Download</button>
             </div>
 
-            <div class="classification">
-                <h3>Clasificación de la Historia Clínica</h3>
-                <div id="classification"></div>
+            <!-- Apartados -->
+            <div id="apartados">
+                <!-- DATOS DE IDENTIFICACIÓN -->
+                <div id="datosIdentificacion" class="apartado">
+                    <h3>DATOS DE IDENTIFICACIÓN</h3>
+                    <div class="campo">
+                        <label for="nombre">Nombre:</label>
+                        <span id="nombre"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="identificacion">Identificación:</label>
+                        <span id="identificacion"></span>
+                    </div>
+                    <div class="campo">
+                        <label for="edad">Edad:</label>
+                        <span id="edad"></span>
+                    </div>
+                </div>
+
+                <!-- MOTIVO DE CONSULTA -->
+                <div id="motivoConsulta" class="apartado">
+                    <h3>MOTIVO DE CONSULTA</h3>
+                    <div class="campo">
+                        <label for="motivo">Motivo:</label>
+                        <span id="motivo"></span>
+                    </div>
+                </div>
+
+                <!-- ENFERMEDAD ACTUAL -->
+                <div id="enfermedadActual" class="apartado">
+                    <h3>ENFERMEDAD ACTUAL</h3>
+                    <div class="campo">
+                        <label for="enfermedad">Descripción:</label>
+                        <span id="enfermedad"></span>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -77,4 +111,5 @@
     <script src="PedIA.js"></script>
 </body>
 </html>
+
 
