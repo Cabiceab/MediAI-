@@ -9,7 +9,53 @@
     <link rel="stylesheet" href="PedIA.css">
 </head>
 <body>
+ <div class="container">
+        <!-- Sección de Signup -->
+        <div class="signup-section">
+            <header>Signup</header>
 
+            <div class="social-buttons">
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div>
+
+            <form>
+                <input type="text" placeholder="Full name" required>
+                <input type="email" placeholder="Email address" required>
+                <input type="password" placeholder="Password" required>
+                <a href="#">Forget Password?</a>
+                <button type="submit" class="btn">Signup</button>
+            </form>
+        </div>
+
+        <!-- Sección de Login -->
+        <div class="login-section">
+            <header>Login</header>
+
+            <div class="social-buttons">
+                <button><i class='bx bxl-google'></i> Use Google</button>
+                <button><i class='bx bxl-apple'></i> Use Apple</button>
+            </div>
+
+            <div class="separator">
+                <div class="line"></div>
+                <p>Or</p>
+                <div class="line"></div>
+            </div>
+
+            <form>
+                <input type="email" placeholder="Email address" required>
+                <input type="password" placeholder="Password" required>
+                <a href="#">Forget Password?</a>
+                <button type="submit" class="btn">Login</button>
+            </form>
+        </div>
     <div class="main-container">
         <div class="speech-card">
             <header class="header">
@@ -124,7 +170,7 @@
 
                 <!-- VARIABLES VITALES -->
                 <div id="variablesVitales" class="apartado" style="display: none;">
-                    <h3>VARIABLES VITALES</h3>
+                    <h3>VARIABLEES VITALES</h3>
                     <div class="campo"><label>Frecuencia Cardíaca:</label> <span id="frecuencia_cardiaca"></span></div>
                     <div class="campo"><label>Frecuencia Respiratoria:</label> <span id="frecuencia_respiratoria"></span></div>
                     <div class="campo"><label>Saturación de Oxígeno:</label> <span id="saturacion_oxigeno"></span></div>
