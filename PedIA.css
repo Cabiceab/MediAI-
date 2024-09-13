@@ -1,28 +1,47 @@
+/* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f4f8;
     color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    position: relative;
 }
 
 .container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 600px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 700px;
     text-align: center;
+    transition: all 0.3s ease-in-out;
 }
 
-.header {
-    font-size: 24px;
-    margin-bottom: 20px;
+.container:hover {
+    transform: scale(1.03);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.header h1 {
+    font-size: 30px;
     color: #007bff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.header .highlight {
+    color: #ff6b6b;
+}
+
+.credit {
+    font-size: 14px;
+    color: #777;
 }
 
 .settings {
@@ -37,39 +56,64 @@ body {
 
 .language label {
     margin-right: 10px;
+    font-size: 16px;
 }
 
+select {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Button Styles */
 .btn {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 25px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .btn:hover {
     background-color: #0056b3;
 }
 
+.btn.clear {
+    background-color: #dc3545;
+}
+
+.btn.clear:hover {
+    background-color: #c82333;
+}
+
 .result {
     margin: 20px 0;
-    padding: 10px;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    min-height: 50px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    min-height: 80px;
     font-size: 16px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.result h3 {
+    margin-bottom: 10px;
+    color: #007bff;
 }
 
 .separator {
-    margin: 20px 0;
-    border-bottom: 1px solid #ddd;
+    margin: 25px 0;
+    border-bottom: 2px dashed #ddd;
 }
 
 .buttons {
     display: flex;
     justify-content: space-between;
+    margin-top: 20px;
 }
 
 .classification {
@@ -79,4 +123,58 @@ body {
 
 .classification h3 {
     color: #007bff;
+    margin-bottom: 10px;
 }
+
+.icon i {
+    font-size: 22px;
+    vertical-align: middle;
+    color: white;
+    margin-right: 5px;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* Instructions Section */
+.instructions {
+    display: none;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.instructions h3 {
+    color: #007bff;
+}
+
+.instructions ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background-color: #0056b3;
+}
+
