@@ -12,104 +12,77 @@
     <div class="container">
         <header class="header">
             <h1>Medi<span class="highlight">AI</span> Speech To Text</h1>
-            <button id="instructionsToggle" class="instructions-btn">Ver Instrucciones</button>
         </header>
 
-        <!-- Manual de Instrucciones (Plegable) -->
-        <div id="instructions" class="instructions">
-            <h3>Instrucciones:</h3>
-            <ul>
-                <li>1. Diga el nombre del ítem (por ejemplo, "Nombre").</li>
-                <li>2. Después de que se reconozca el ítem, diga el valor correspondiente (por ejemplo, "Camilo Avila").</li>
-                <li>3. El sistema mostrará automáticamente los ítems y sus valores mientras hablas.</li>
-                <li>4. Presiona "Clear" para reiniciar el sistema y comenzar de nuevo.</li>
-                <li>5. Puedes descargar la transcripción al finalizar.</li>
-            </ul>
+        <!-- Botón para empezar a escuchar -->
+        <button id="startListening" class="btn record">
+            <div class="icon">
+                <i class='bx bx-microphone'></i>
+            </div>
+            <p>Start Listening</p>
+        </button>
+
+        <div class="result">
+            <h3>Transcripción</h3>
+            <p class="resultText"></p>
         </div>
 
-        <!-- Sección principal -->
-        <div class="main-content">
-            <div class="settings">
-                <div class="language">
-                    <label for="language">Idioma:</label>
-                    <select id="language">
-                        <option value="es-ES">Español</option>
-                        <option value="en-US">English</option>
-                        <option value="de-DE">Deutsch</option>
-                        <option value="pt-PT">Português</option>
-                        <option value="ru-RU">Русский</option>
-                    </select>
-                </div>
+        <!-- Lista de apartados -->
+        <div id="apartados">
+            <!-- DATOS DE IDENTIFICACIÓN -->
+            <div id="datosIdentificacion" class="apartado">
+                <h3>DATOS DE IDENTIFICACIÓN</h3>
+                <div class="campo"><label>Nombre:</label> <span id="nombre"></span></div>
+                <div class="campo"><label>Identificación:</label> <span id="identificacion"></span></div>
+                <div class="campo"><label>Edad:</label> <span id="edad"></span></div>
+                <div class="campo"><label>Fecha de Nacimiento:</label> <span id="fecha_nacimiento"></span></div>
+                <div class="campo"><label>Escolaridad:</label> <span id="escolaridad"></span></div>
+                <!-- Más campos de este apartado... -->
             </div>
 
-            <div class="separator"></div>
-
-            <button id="startListening" class="btn record">
-                <div class="icon">
-                    <i class='bx bx-microphone'></i>
-                </div>
-                <p>Start Listening</p>
-            </button>
-
-            <div class="result">
-                <h3>Transcripción</h3>
-                <p class="resultText"></p>
+            <!-- MOTIVO DE CONSULTA -->
+            <div id="motivoConsulta" class="apartado">
+                <h3>MOTIVO DE CONSULTA</h3>
+                <div class="campo"><label>Motivo:</label> <span id="motivo"></span></div>
             </div>
 
-            <div class="separator"></div>
-
-            <div class="buttons">
-                <button class="btn clear">Clear</button>
-                <button class="btn download" disabled>Download</button>
+            <!-- ENFERMEDAD ACTUAL -->
+            <div id="enfermedadActual" class="apartado">
+                <h3>ENFERMEDAD ACTUAL</h3>
+                <div class="campo"><label>Descripción:</label> <span id="enfermedad"></span></div>
             </div>
 
-            <!-- Apartados -->
-            <div id="apartados">
-                <!-- DATOS DE IDENTIFICACIÓN -->
-                <div id="datosIdentificacion" class="apartado">
-                    <h3>DATOS DE IDENTIFICACIÓN</h3>
-                    <div class="campo">
-                        <label for="nombre">Nombre:</label>
-                        <span id="nombre"></span>
-                    </div>
-                    <div class="campo">
-                        <label for="identificacion">Identificación:</label>
-                        <span id="identificacion"></span>
-                    </div>
-                    <div class="campo">
-                        <label for="edad">Edad:</label>
-                        <span id="edad"></span>
-                    </div>
-                </div>
-
-                <!-- MOTIVO DE CONSULTA -->
-                <div id="motivoConsulta" class="apartado">
-                    <h3>MOTIVO DE CONSULTA</h3>
-                    <div class="campo">
-                        <label for="motivo">Motivo:</label>
-                        <span id="motivo"></span>
-                    </div>
-                </div>
-
-                <!-- ENFERMEDAD ACTUAL -->
-                <div id="enfermedadActual" class="apartado">
-                    <h3>ENFERMEDAD ACTUAL</h3>
-                    <div class="campo">
-                        <label for="enfermedad">Descripción:</label>
-                        <span id="enfermedad"></span>
-                    </div>
-                </div>
+            <!-- ANTECEDENTES -->
+            <div id="antecedentes" class="apartado">
+                <h3>ANTECEDENTES</h3>
+                <div class="campo"><label>Personales:</label> <span id="personales"></span></div>
+                <div class="campo"><label>Prenatales:</label> <span id="prenatales"></span></div>
+                <!-- Más campos de este apartado... -->
             </div>
+
+            <!-- TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO -->
+            <div id="trianguloPediatrico" class="apartado">
+                <h3>TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO</h3>
+                <div class="campo"><label>Neurológico:</label> <span id="neurologico"></span></div>
+                <div class="campo"><label>Circulatorio:</label> <span id="circulatorio"></span></div>
+                <div class="campo"><label>Respiratoria:</label> <span id="respiratoria"></span></div>
+            </div>
+
+            <!-- VARIABLES VITALES -->
+            <div id="variablesVitales" class="apartado">
+                <h3>VARIABLES VITALES</h3>
+                <div class="campo"><label>Frecuencia Cardíaca:</label> <span id="frecuencia_cardiaca"></span></div>
+                <div class="campo"><label>Frecuencia Respiratoria:</label> <span id="frecuencia_respiratoria"></span></div>
+                <div class="campo"><label>Saturación de Oxígeno:</label> <span id="saturacion_oxigeno"></span></div>
+                <!-- Más campos de este apartado... -->
+            </div>
+
+            <!-- Más apartados... -->
 
         </div>
     </div>
 
-    <footer class="footer">
-        <p>Software desarrollado por Camilo Avila B.</p>
-    </footer>
-
     <script src="PedIA.js"></script>
 </body>
 </html>
-
 
