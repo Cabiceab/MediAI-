@@ -44,7 +44,7 @@ body {
     transition: all 0.6s ease;
 }
 
-.signup-section,
+.signup-section header,
 .login-section header {
     font-size: 30px;
     text-align: center;
@@ -169,30 +169,23 @@ form .btn {
     opacity: 0.6;
 }
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 body {
-    font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #6A82FB, #FC5C7D);
     color: #333;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Ocultar overflow para evitar problemas */
+    overflow: hidden;
 }
 
 .main-container {
     width: 100%;
-    height: 100%; /* Hacer que el contenedor ocupe toda la altura de la pantalla */
+    height: 100%; 
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-y: auto; /* Permitir desplazamiento vertical si el contenido es más largo que la pantalla */
+    overflow-y: auto;
 }
 
 .speech-card {
@@ -203,8 +196,8 @@ body {
     width: 90%;
     max-width: 700px;
     text-align: center;
-    max-height: 90vh; /* Limitar la altura para que no exceda la pantalla */
-    overflow-y: auto; /* Desplazamiento dentro de la tarjeta */
+    max-height: 90vh;
+    overflow-y: auto;
     transition: transform 0.3s ease;
 }
 
