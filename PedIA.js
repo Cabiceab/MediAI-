@@ -107,19 +107,3 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
-
-// Mostrar/Ocultar instrucciones
-instructionsToggle.addEventListener('click', () => {
-    if (instructions.style.display === 'none' || instructions.style.display === '') {
-        instructions.style.display = 'block';
-        instructionsToggle.innerText = 'Ocultar Instrucciones';
-    } else {
-        instructions.style.display = 'none';
-        instructionsToggle.innerText = 'Ver Instrucciones';
-    }
-});
-
-// Función auxiliar para convertir nombre de sección a ID
-function sectionToId(section) {
-    return section.replace(/\s+/g, '');
-}
