@@ -53,7 +53,9 @@ body {
     text-align: left;
 }
 
+/* Campos dentro de los apartados, ocultos inicialmente */
 .campo {
+    display: none; /* Los campos dentro de cada apartado están ocultos inicialmente */
     margin-bottom: 10px;
 }
 
@@ -86,6 +88,7 @@ body {
     background-color: #e2e2e2;
 }
 
+/* Estilos para el footer */
 .footer {
     position: fixed;
     bottom: 10px;
@@ -94,19 +97,16 @@ body {
     color: #888;
 }
 
-/* Para desplegar campos visibles */
-.apartado .campos {
-    display: none; /* Ocultar campos dentro de apartados */
-}
-
+/* Títulos de los apartados (h3) */
 h3 {
-    cursor: pointer;
+    cursor: pointer; /* Permitir que los títulos sean interactivos */
     padding: 10px;
     background-color: #f1f1f1;
     margin: 0;
     border-bottom: 1px solid #ddd;
 }
 
+/* Estilos para los campos dentro de los apartados */
 .campos {
     padding: 10px;
     background-color: #f9f9f9;
