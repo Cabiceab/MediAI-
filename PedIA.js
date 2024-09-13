@@ -9,6 +9,7 @@ recognition.lang = 'es-ES';
 const recordButton = document.getElementById('startListening');
 const resultText = document.querySelector('.resultText');
 const apartados = document.querySelectorAll('.apartado'); // Todos los apartados
+const apartadoLista = document.getElementById('apartadoLista'); // Lista de apartados
 const apartadoItems = document.querySelectorAll('.apartado h3'); // Títulos de los apartados (h3)
 
 let currentField = null; // Campo actual que se llenará
@@ -31,8 +32,9 @@ const sections = {
     "plan": ["estancia", "dieta", "farmacologicos_plan", "paraclinicos_plan", "cuidados_enfermeria"]
 };
 
-// Mostrar todos los apartados al hacer clic en "Start Listening"
+// Mostrar la lista de apartados y todos los apartados al hacer clic en "Start Listening"
 recordButton.addEventListener('click', () => {
+    apartadoLista.style.display = 'block'; // Mostrar la lista de apartados
     apartados.forEach(apartado => {
         apartado.style.display = 'block'; // Mostrar todos los apartados
     });
