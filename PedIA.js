@@ -7,7 +7,7 @@ const apartados = document.querySelectorAll('.apartado'); // Todos los apartados
 let currentField = null; // Campo actual que se llenará
 let currentSection = null; // Apartado actual que se desplegará
 
-// Apartados y campos esperados
+// Apartados y campos esperados (coinciden con el HTML)
 const sections = {
     "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad", "eps", "natural", "residente", "procedente", "direccion", "telefono", "nombre del acompanante", "parentesco", "edad del acompanante", "ocupacion", "confiabilidad", "fecha de ingreso"],
     "motivo de consulta": ["motivo"],
@@ -34,12 +34,12 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     recognition.interimResults = false;
     recognition.lang = 'es-ES';
 
-    // Iniciar el reconocimiento de voz
+    // Iniciar el reconocimiento de voz al hacer clic en "Start Listening"
     recordButton.addEventListener('click', () => {
         recognition.start();
         resultText.innerText = 'Por favor, menciona un apartado para continuar.';
 
-        // Mostrar los títulos de todos los apartados al hacer clic en "Start Listening"
+        // Mostrar solo los títulos de los apartados al hacer clic en "Start Listening"
         apartados.forEach(apartado => {
             apartado.style.display = 'block'; // Mostrar los títulos de los apartados
             const fields = apartado.querySelectorAll('.campo');
@@ -111,7 +111,8 @@ instructionsToggle.addEventListener('click', () => {
 
 // Función auxiliar para convertir nombre de sección a ID
 function sectionToId(section) {
-    return section.replace(/\s+/g, '');
+    return section.replace(/\s+/g, '').toLowerCase(); // Convertir sección a ID en minúsculas
 }
+
 
 
