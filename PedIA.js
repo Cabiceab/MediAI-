@@ -45,11 +45,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
         // Mostrar todos los apartados sin los campos (los apartados estarán vacíos inicialmente)
         allApartados.forEach(apartado => {
-            apartado.style.display = 'block'; // Mostrar los apartados al iniciar la escucha
-            // Ocultar los campos de cada apartado
-            apartado.querySelectorAll('.campo').forEach(campo => {
-                campo.style.display = 'none';
-            });
+            apartado.style.display = 'block';
         });
     });
 
@@ -62,15 +58,8 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         Object.keys(sections).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
-                const sectionElement = document.getElementById(sectionToId(section));
-                sectionElement.style.display = 'block'; // Mostrar el apartado completo
-
-                // Desplegar todos los campos de ese apartado
-                sections[currentSection].forEach(field => {
-                    document.getElementById(field).parentElement.style.display = 'block';
-                });
-
-                resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
+                document.getElementById(sectionToId(section)).style.display = 'block'; // Mostrar el apartado completo
+                resultText.innerText = Apartado "${section}" seleccionado. Menciona los campos.;
             }
         });
 
@@ -79,7 +68,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             sections[currentSection].forEach(field => {
                 if (transcript.includes(field)) {
                     currentField = field;
-                    resultText.innerText = `Campo detectado: ${field}. Ahora menciona el valor.`;
+                    resultText.innerText = Campo detectado: ${field}. Ahora menciona el valor.;
                 }
             });
 
@@ -87,7 +76,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             if (currentField) {
                 let value = transcript.replace(currentField, '').trim();
                 document.getElementById(currentField).innerText = value;
-                resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
+                resultText.innerText = Campo "${currentField}" actualizado con el valor: ${value};
                 currentField = null; // Reinicia el campo
             }
         }
@@ -95,12 +84,28 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
     recognition.onerror = (event) => {
         console.error('Error en el reconocimiento de voz:', event.error);
-        resultText.innerText = `Error: ${event.error}`;
+        resultText.innerText = Error: ${event.error};
     };
 
     recognition.onend = () => {
         console.log('Reconocimiento de voz finalizado.');
     };
+}
+
+// Mostrar/Ocultar instrucciones
+instructionsToggle.addEventListener('click', () => {
+    if (instructions.style.display === 'none') {
+        instructions.style.display = 'block';
+        instructionsToggle.innerText = 'Ocultar Instrucciones';
+    } else {
+        instructions.style.display = 'none';
+        instructionsToggle.innerText = 'Ver Instrucciones';
+    }
+});
+
+// Función auxiliar para convertir nombre de sección a ID
+function sectionToId(section) {
+    return section.replace(/\s+/g, '');
 }
 
 // Mostrar/Ocultar instrucciones
