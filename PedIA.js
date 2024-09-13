@@ -94,7 +94,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
 // Mostrar/Ocultar instrucciones
 instructionsToggle.addEventListener('click', () => {
-    if (instructions.style.display === 'none' || instructions.style.display === '') {
+    if (instructions.style.display === 'none') {
         instructions.style.display = 'block';
         instructionsToggle.innerText = 'Ocultar Instrucciones';
     } else {
@@ -103,7 +103,4 @@ instructionsToggle.addEventListener('click', () => {
     }
 });
 
-// Función auxiliar para convertir nombre de sección a ID
-function sectionToId(section) {
-    return section.replace(/\s+/g, '');
-}
+
