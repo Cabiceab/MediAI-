@@ -27,48 +27,6 @@ body {
     margin-bottom: 10px;
 }
 
-.highlight {
-    color: #ff6b6b;
-}
-
-.instructions-btn {
-    background-color: transparent;
-    border: none;
-    color: #007bff;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.instructions {
-    display: none; /* Oculto por defecto */
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 15px;
-    text-align: left;
-}
-
-.instructions ul {
-    list-style-type: disc;
-    padding-left: 20px;
-}
-
-.settings, .result, .classification {
-    margin-bottom: 20px;
-}
-
-.language label {
-    font-size: 16px;
-}
-
-select {
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-/* Buttons */
 .btn {
     background-color: #007bff;
     color: white;
@@ -76,29 +34,18 @@ select {
     padding: 12px 20px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
     font-size: 16px;
+    margin-bottom: 20px;
 }
 
 .btn:hover {
     background-color: #0056b3;
 }
 
-.clear {
-    background-color: #ff6b6b;
-}
-
-.clear:hover {
-    background-color: #e63946;
-}
-
-.buttons {
-    display: flex;
-    justify-content: space-between;
+.result {
     margin-bottom: 20px;
 }
 
-/* Apartados */
 .apartado {
     display: none; /* Los apartados estarán ocultos hasta que se mencionen */
     margin-top: 20px;
@@ -116,13 +63,4 @@ select {
 .campo span {
     margin-left: 10px;
     font-style: italic;
-}
-
-/* Footer */
-.footer {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: #888;
 }
