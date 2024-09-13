@@ -1,10 +1,9 @@
 // Variables de los botones e inputs
 const recordButton = document.getElementById('startListening');
 const resultText = document.querySelector('.resultText');
-const apartadoLista = document.getElementById('apartadoLista');
 const instructionsToggle = document.getElementById('instructionsToggle');
 const instructions = document.getElementById('instructions');
-const allApartados = document.querySelectorAll('.apartado');
+const apartados = document.querySelectorAll('.apartado'); // Todos los apartados
 let currentField = null; // Campo actual que se llenará
 let currentSection = null; // Apartado actual que se desplegará
 
@@ -40,15 +39,12 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         recognition.start();
         resultText.innerText = 'Por favor, menciona un apartado para continuar.';
 
-        // Mostrar la lista de apartados cuando el usuario haga clic en "Start Listening"
-        apartadoLista.style.display = 'block'; 
-
-        // Mostrar todos los apartados sin los campos (inicialmente vacíos)
-        allApartados.forEach(apartado => {
-            apartado.style.display = 'block'; // Mostrar solo los títulos de los apartados
+        // Mostrar solo los títulos de los apartados cuando el usuario haga clic en "Start Listening"
+        apartados.forEach(apartado => {
+            apartado.style.display = 'block'; // Mostrar el título de cada apartado
             const fields = apartado.querySelectorAll('.campo');
             fields.forEach(field => {
-                field.style.display = 'none'; // Ocultar los campos hasta que se mencionen
+                field.style.display = 'none'; // Ocultar los campos hasta que se mencione el apartado
             });
         });
     });
