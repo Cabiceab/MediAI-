@@ -39,35 +39,37 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         recognition.start();
         resultText.innerText = 'Por favor, menciona un apartado para continuar.';
 
-        // Mostrar solo los títulos de los apartados cuando el usuario haga clic en "Start Listening"
+        // Mostrar los títulos de todos los apartados al hacer clic en "Start Listening"
         apartados.forEach(apartado => {
-            apartado.style.display = 'block'; // Mostrar el título de cada apartado
+            apartado.style.display = 'block'; // Mostrar los títulos de los apartados
             const fields = apartado.querySelectorAll('.campo');
             fields.forEach(field => {
-                field.style.display = 'none'; // Ocultar los campos hasta que se mencione el apartado
+                field.style.display = 'none'; // Ocultar todos los campos dentro de los apartados
             });
         });
     });
 
-    // Captura el resultado del reconocimiento
+    // Captura el resultado del reconocimiento de voz
     recognition.onresult = (event) => {
         let transcript = event.results[0][0].transcript.toLowerCase();
         resultText.innerText = transcript;
 
-        // Si el usuario menciona un apartado, se muestran sus campos
+        // Si el usuario menciona un apartado, mostramos los campos de ese apartado
         Object.keys(sections).forEach(section => {
             if (transcript.includes(section)) {
                 currentSection = section;
                 const sectionDiv = document.getElementById(sectionToId(section));
+                
+                // Mostrar los campos dentro del apartado mencionado
                 const fields = sectionDiv.querySelectorAll('.campo');
                 fields.forEach(field => {
-                    field.style.display = 'block'; // Mostrar todos los campos del apartado seleccionado
+                    field.style.display = 'block';
                 });
                 resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
             }
         });
 
-        // Si se menciona un campo dentro del apartado, lo llenamos
+        // Si el usuario menciona un campo dentro del apartado, lo llenamos
         if (currentSection) {
             sections[currentSection].forEach(field => {
                 if (transcript.includes(field)) {
@@ -81,7 +83,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
                 let value = transcript.replace(currentField, '').trim();
                 document.getElementById(currentField).innerText = value;
                 resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
-                currentField = null; // Reinicia el campo
+                currentField = null; // Reiniciar el campo
             }
         }
     };
@@ -111,4 +113,5 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
+
 
