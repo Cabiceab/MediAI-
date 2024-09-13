@@ -1,24 +1,16 @@
 // Variables de los botones e inputs
 const recordButton = document.getElementById('startListening');
 const resultText = document.querySelector('.resultText');
+const apartadoLista = document.getElementById('apartadoLista');
 let currentField = null; // Campo actual que se llenará
 let currentSection = null; // Apartado actual que se desplegará
 
 // Apartados y campos esperados
 const sections = {
-    "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad", "eps", "natural", "residente", "procedente", "direccion", "telefono", "nombre del acompanante", "parentesco", "edad del acompanante", "ocupacion", "confiabilidad", "fecha de ingreso"],
+    "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad"],
     "motivo de consulta": ["motivo"],
-    "enfermedad actual": ["enfermedad"],
-    "antecedentes": ["personales", "prenatales", "patologicos", "hospitalizaciones", "farmacologicos", "quirurgicos", "transfusionales", "traumaticos", "alergicos"],
-    "triángulo de aproximación pediátrico": ["neurologico", "circulatorio", "respiratorio"],
-    "variables vitales": ["frecuencia cardiaca", "frecuencia respiratoria", "saturación de oxígeno", "temperatura", "tensión arterial"],
-    "medidas antropométricas": ["peso", "talla"],
-    "índices antropométricos": ["talla/edad", "imc/edad", "peso/talla", "peso/edad"],
-    "examen físico": ["neurologico_examen", "cabeza", "cuello", "torax", "abdomen", "genitourinario", "extremidades", "piel"],
-    "paraclínicos": ["laboratorios"],
-    "análisis": ["diagnóstico nutricional"],
-    "impresión diagnóstica": ["impresión diagnóstica"],
-    "plan": ["estancia", "dieta", "farmacologicos_plan", "paraclinicos_plan", "cuidados_enfermeria"]
+    "enfermedad actual": ["enfermedad"]
+    // Agrega más apartados y campos aquí...
 };
 
 // Verifica la compatibilidad del navegador para SpeechRecognition
@@ -34,7 +26,8 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     // Iniciar el reconocimiento de voz
     recordButton.addEventListener('click', () => {
         recognition.start();
-        resultText.innerText = 'Por favor, menciona el apartado que deseas llenar.';
+        resultText.innerText = 'Por favor, menciona un apartado.';
+        apartadoLista.style.display = 'block'; // Mostrar la lista de apartados
     });
 
     // Captura el resultado del reconocimiento
