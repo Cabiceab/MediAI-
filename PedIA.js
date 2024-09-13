@@ -4,6 +4,7 @@ const resultText = document.querySelector('.resultText');
 const instructionsToggle = document.getElementById('instructionsToggle');
 const instructions = document.getElementById('instructions');
 const apartados = document.querySelectorAll('.apartado'); // Todos los apartados
+
 let currentField = null; // Campo actual que se llenará
 let currentSection = null; // Apartado actual que se desplegará
 
@@ -38,15 +39,6 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     recordButton.addEventListener('click', () => {
         recognition.start();
         resultText.innerText = 'Por favor, menciona un apartado para continuar.';
-
-        // Mostrar solo los títulos de los apartados al hacer clic en "Start Listening"
-        apartados.forEach(apartado => {
-            apartado.style.display = 'block'; // Mostrar los títulos de los apartados
-            const fields = apartado.querySelectorAll('.campo');
-            fields.forEach(field => {
-                field.style.display = 'none'; // Ocultar todos los campos dentro de los apartados
-            });
-        });
     });
 
     // Captura el resultado del reconocimiento de voz
@@ -59,12 +51,13 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             if (transcript.includes(section)) {
                 currentSection = section;
                 const sectionDiv = document.getElementById(sectionToId(section));
-                
-                // Mostrar los campos dentro del apartado mencionado
-                const fields = sectionDiv.querySelectorAll('.campo');
-                fields.forEach(field => {
-                    field.style.display = 'block';
+
+                // Ocultamos todos los apartados y luego mostramos el seleccionado
+                apartados.forEach(apartado => {
+                    apartado.style.display = 'none';
                 });
+                sectionDiv.style.display = 'block'; // Mostrar solo el apartado mencionado
+
                 resultText.innerText = `Apartado "${section}" seleccionado. Menciona los campos.`;
             }
         });
@@ -113,6 +106,4 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '').toLowerCase(); // Convertir sección a ID en minúsculas
 }
-
-
 
