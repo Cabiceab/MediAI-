@@ -1,3 +1,4 @@
+// Variables de los botones e inputs
 const recordButton = document.getElementById('startListening');
 const clearButton = document.querySelector('.btn.clear');
 const downloadButton = document.querySelector('.btn.download');
@@ -9,16 +10,16 @@ const instructions = document.getElementById('instructions');
 
 let currentField = null; // Variable para capturar el campo activo
 
-// Verifica la compatibilidad del navegador
+// Verifica la compatibilidad del navegador para SpeechRecognition
 if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     alert('Tu navegador no soporta reconocimiento de voz. Usa Google Chrome o un navegador compatible.');
 } else {
     // Configuración del reconocimiento de voz
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
-    recognition.continuous = false; // Cambié a false para capturar el discurso una vez por clic
-    recognition.interimResults = false; // Para obtener solo los resultados finales
-    recognition.lang = 'es-ES'; // Idioma por defecto es español
+    recognition.continuous = false; // Para que el reconocimiento se detenga después de la primera entrada
+    recognition.interimResults = false; // Solo obtener los resultados finales
+    recognition.lang = 'es-ES'; // Idioma por defecto
 
     // Evento para el botón "Start Listening"
     recordButton.addEventListener('click', () => {
@@ -28,7 +29,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         recordButton.querySelector('p').innerText = 'Escuchando...';
     });
 
-    // Cuando se reconoce un resultado
+    // Captura el resultado del reconocimiento
     recognition.onresult = (event) => {
         let transcript = ''; 
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -49,7 +50,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             });
         }
 
-        downloadButton.disabled = false; // Habilita el botón de descargar
+        downloadButton.disabled = false; // Habilita el botón de descarga
         recordButton.querySelector('p').innerText = 'Start Listening'; // Restablece el texto del botón
     };
 
@@ -57,5 +58,33 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
     recognition.onerror = (event) => {
         console.error('Error en el reconocimiento de voz:', event.error);
         resultText.innerText = `Error: ${event.error}`;
-        recordButton.querySelector('p
+        recordButton.querySelector('p').innerText = 'Start Listening';
+    };
+
+    // Finaliza el reconocimiento
+    recognition.onend = () => {
+        console.log('Reconocimiento de voz finalizado.');
+        recordButton.querySelector('p').innerText = 'Start Listening'; // Restablece el texto del botón
+    };
+}
+
+// Mostrar y ocultar el manual de instrucciones
+instructionsToggle.addEventListener('click', () => {
+    if (instructions.style.display === 'none' || instructions.style.display === '') {
+        instructions.style.display = 'block';
+        instructionsToggle.innerText = 'Ocultar Instrucciones';
+    } else {
+        instructions.style.display = 'none';
+        instructionsToggle.innerText = 'Ver Instrucciones';
+    }
+});
+
+// Limpiar el contenido de la transcripción y la clasificación
+clearButton.addEventListener('click', () => {
+    resultText.innerText = '';
+    classificationDiv.innerHTML = '';
+    currentField = null;
+    downloadButton.disabled = true;
+});
+
 
