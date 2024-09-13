@@ -11,7 +11,7 @@ let currentField = null; // Variable para capturar el campo activo
 
 // Toggle Instructions Visibility
 instructionsToggle.addEventListener('click', () => {
-    if (instructions.style.display === 'none') {
+    if (instructions.style.display === 'none' || instructions.style.display === '') {
         instructions.style.display = 'block';
         instructionsToggle.innerText = 'Ocultar Instrucciones';
     } else {
@@ -70,9 +70,13 @@ recognition.onresult = (event) => {
     }
 
     downloadButton.disabled = false;
-};
+});
 
 // Botón para limpiar
 clearButton.addEventListener('click', () => {
     resultText.innerText = '';
-   
+    classificationDiv.innerHTML = '';
+    currentField = null;
+    downloadButton.disabled = true;
+});
+
