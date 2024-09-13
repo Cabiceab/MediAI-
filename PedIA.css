@@ -98,6 +98,26 @@ select {
     margin-bottom: 20px;
 }
 
+/* Apartados */
+.apartado {
+    display: none; /* Los apartados estarán ocultos hasta que se mencionen */
+    margin-top: 20px;
+    text-align: left;
+}
+
+.campo {
+    margin-bottom: 10px;
+}
+
+.campo label {
+    font-weight: bold;
+}
+
+.campo span {
+    margin-left: 10px;
+    font-style: italic;
+}
+
 /* Footer */
 .footer {
     position: fixed;
