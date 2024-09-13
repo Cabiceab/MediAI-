@@ -1,107 +1,82 @@
-// Inicializar SpeechRecognition con soporte para diferentes navegadores
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-
-recognition.interimResults = false; // Solo obtener el resultado final
-recognition.maxAlternatives = 1;    // Número máximo de resultados alternativos
-recognition.lang = 'es-ES';         // Idioma predeterminado: Español
-
-// Seleccionar los elementos de la interfaz de usuario
 const recordButton = document.querySelector('.btn.record');
+const clearButton = document.querySelector('.btn.clear');
+const downloadButton = document.querySelector('.btn.download');
 const resultText = document.querySelector('.resultText');
 const classificationDiv = document.getElementById('classification');
 const languageSelect = document.getElementById('language');
 
-let listening = false; // Controlar si el reconocimiento está activo
-let finalTranscript = ''; // Texto transcrito final
+// Setup for Speech Recognition API
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.continuous = true;
+recognition.interimResults = false;
+recognition.lang = 'es-ES';  // Default language is set to Spanish
 
-// Secciones para clasificar el texto
-const sections = {
-    "DATOS DE IDENTIFICACIÓN": [
-        "NOMBRE", "IDENTIFICACIÓN", "EDAD", "FECHA DE NACIMIENTO", "ESCOLARIDAD", "EPS", "NATURAL", "RESIDENTE", "PROCEDENTE", "DIRECCIÓN", "TELÉFONO", "NOMBRE DEL ACOMPAÑANTE", "PARENTESCO", "OCUPACIÓN", "CONFIABILIDAD"
-    ],
-    "ANTECEDENTES": [
-        "PRENATALES", "NATALES", "PATOLÓGICOS", "HOSPITALIZACIONES", "FARMACOLÓGICOS", "QUIRÚRGICOS", "TRANSFUSIONALES", "TRAUMÁTICOS", "ALÉRGICOS", "GRUPO SANGUÍNEO", "ALIMENTARIOS", "NEXO CONTAGIOSO", "NEXO EPIDEMIOLÓGICO", "NEURODESARROLLO"
-    ],
-    "MOTIVO DE CONSULTA": ["MOTIVO DE CONSULTA"],
-    "ENFERMEDAD ACTUAL": ["ENFERMEDAD ACTUAL"],
-    "EXAMEN FÍSICO": ["NEUROLÓGICO", "CABEZA", "CUELLO", "TÓRAX", "ABDOMEN", "GENITOURINARIO", "EXTREMIDADES", "PIEL"]
-};
-
-// Cambiar el idioma de reconocimiento de voz según el valor seleccionado
-languageSelect.addEventListener('change', () => {
-    recognition.lang = languageSelect.value;
-});
-
-// Función para iniciar/detener el reconocimiento de voz
+// Event listener for the start button
 recordButton.addEventListener('click', () => {
-    if (!listening) {
-        recognition.start(); // Iniciar reconocimiento de voz
-        listening = true;
-        recordButton.querySelector('p').textContent = 'Listening...'; // Cambiar el texto del botón
-        recordButton.classList.add('active'); // Añadir una clase para estilizar cuando esté escuchando
-    } else {
-        recognition.stop(); // Detener reconocimiento de voz
-        listening = false;
-        recordButton.querySelector('p').textContent = 'Start Listening'; // Cambiar texto del botón de nuevo
-        recordButton.classList.remove('active');
-    }
+    recognition.lang = languageSelect.value;
+    recognition.start();
+    console.log('Recognition started');
 });
 
-// Al recibir el resultado del reconocimiento de voz
+// When speech is recognized
 recognition.onresult = (event) => {
-    finalTranscript = event.results[0][0].transcript; // Obtener el resultado de la transcripción
-    resultText.textContent = finalTranscript; // Mostrar la transcripción en la interfaz
-
-    classifyText(finalTranscript); // Clasificar el texto
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+    }
+    resultText.innerText = transcript;
+    classifyMedicalData(transcript);  // Automatically classify the data
+    downloadButton.disabled = false;
 };
 
-// Manejo de errores en la API de reconocimiento de voz
-recognition.onerror = (event) => {
-    console.error('Speech recognition error detected: ' + event.error);
-};
+// Event listener for the clear button
+clearButton.addEventListener('click', () => {
+    resultText.innerText = '';
+    classificationDiv.innerHTML = '';
+    downloadButton.disabled = true;
+});
 
-// Clasificar el texto transcrito en las secciones correspondientes
-function classifyText(text) {
-    const classifiedData = {};
+// Event listener for download button
+downloadButton.addEventListener('click', () => {
+    const blob = new Blob([resultText.innerText], { type: 'text/plain' });
+    const anchor = document.createElement('a');
+    anchor.href = URL.createObjectURL(blob);
+    anchor.download = 'transcription.txt';
+    anchor.click();
+});
 
-    // Recorrer las secciones y clasificar los datos
-    for (const section in sections) {
-        classifiedData[section] = [];
+// Function to classify the recognized medical data
+function classifyMedicalData(transcript) {
+    let classificationHTML = '';
 
-        sections[section].forEach(key => {
-            if (text.includes(key)) {
-                const regex = new RegExp(`${key}: (.*)`, 'i');
-                const match = text.match(regex);
+    const fields = {
+        'nombre': 'Nombre',
+        'identificación': 'Identificación',
+        'edad': 'Edad',
+        'fecha de nacimiento': 'Fecha de Nacimiento',
+        'escolaridad': 'Escolaridad',
+        'EPS': 'EPS',
+        'dirección': 'Dirección',
+        'teléfono': 'Teléfono',
+        'motivo de consulta': 'Motivo de Consulta',
+        'enfermedad actual': 'Enfermedad Actual',
+        // Add more fields as necessary
+    };
 
-                if (match && match[1]) {
-                    classifiedData[section].push({ key, value: match[1].trim() });
-                }
-            }
-        });
+    for (const field in fields) {
+        if (transcript.toLowerCase().includes(field)) {
+            const value = getFieldValue(transcript, field);
+            classificationHTML += `<p><strong>${fields[field]}:</strong> ${value}</p>`;
+        }
     }
 
-    displayClassification(classifiedData); // Mostrar la clasificación en la interfaz
+    classificationDiv.innerHTML = classificationHTML;
 }
 
-// Mostrar la clasificación en la interfaz
-function displayClassification(data) {
-    classificationDiv.innerHTML = ''; // Limpiar la clasificación anterior
-
-    for (const section in data) {
-        const sectionDiv = document.createElement('div');
-        sectionDiv.classList.add('section');
-
-        const title = document.createElement('h4');
-        title.textContent = section;
-        sectionDiv.appendChild(title);
-
-        data[section].forEach(item => {
-            const p = document.createElement('p');
-            p.innerHTML = `<strong>${item.key}:</strong> ${item.value}`;
-            sectionDiv.appendChild(p);
-        });
-
-        classificationDiv.appendChild(sectionDiv);
-    }
+// Function to extract the value following a keyword in the transcript
+function getFieldValue(transcript, fieldName) {
+    const regex = new RegExp(`${fieldName}\\s*:\\s*(.+?)(?=,|$)`, 'i');
+    const match = transcript.match(regex);
+    return match ? match[1].trim() : 'No encontrado';
 }
