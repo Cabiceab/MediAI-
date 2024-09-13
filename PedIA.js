@@ -6,12 +6,19 @@ let currentSection = null; // Apartado actual que se desplegará
 
 // Apartados y campos esperados
 const sections = {
-    "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad"],
+    "datos de identificación": ["nombre", "identificación", "edad", "fecha de nacimiento", "escolaridad", "eps", "natural", "residente", "procedente", "direccion", "telefono", "nombre del acompanante", "parentesco", "edad del acompanante", "ocupacion", "confiabilidad", "fecha de ingreso"],
     "motivo de consulta": ["motivo"],
     "enfermedad actual": ["enfermedad"],
-    "antecedentes": ["personales", "prenatales"],
-    "triángulo de aproximación pediátrico": ["neurológico", "circulatorio", "respiratoria"],
-    "variables vitales": ["frecuencia cardiaca", "frecuencia respiratoria", "saturación de oxígeno"]
+    "antecedentes": ["personales", "prenatales", "patologicos", "hospitalizaciones", "farmacologicos", "quirurgicos", "transfusionales", "traumaticos", "alergicos"],
+    "triángulo de aproximación pediátrico": ["neurologico", "circulatorio", "respiratorio"],
+    "variables vitales": ["frecuencia cardiaca", "frecuencia respiratoria", "saturación de oxígeno", "temperatura", "tensión arterial"],
+    "medidas antropométricas": ["peso", "talla"],
+    "índices antropométricos": ["talla/edad", "imc/edad", "peso/talla", "peso/edad"],
+    "examen físico": ["neurologico_examen", "cabeza", "cuello", "torax", "abdomen", "genitourinario", "extremidades", "piel"],
+    "paraclínicos": ["laboratorios"],
+    "análisis": ["diagnóstico nutricional"],
+    "impresión diagnóstica": ["impresión diagnóstica"],
+    "plan": ["estancia", "dieta", "farmacologicos_plan", "paraclinicos_plan", "cuidados_enfermeria"]
 };
 
 // Verifica la compatibilidad del navegador para SpeechRecognition
@@ -77,5 +84,4 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 function sectionToId(section) {
     return section.replace(/\s+/g, '');
 }
-
 
