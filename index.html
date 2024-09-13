@@ -15,8 +15,8 @@
             <button id="instructionsToggle" class="instructions-btn">Ver Instrucciones</button>
         </header>
 
-        <!-- Manual de Instrucciones (Plegable) -->
-        <div id="instructions" class="instructions">
+        <!-- Manual de Instrucciones (Oculto por defecto) -->
+        <div id="instructions" class="instructions" style="display: none;">
             <h3>Instrucciones:</h3>
             <ul>
                 <li>1. Presiona el botón "Start Listening" para comenzar el reconocimiento de voz.</li>
@@ -37,11 +37,11 @@
 
         <div class="result">
             <h3>Transcripción</h3>
-            <p class="resultText"></p>
+            <p class="resultText">Por favor, menciona el apartado que deseas llenar.</p>
         </div>
 
-        <!-- Lista de apartados -->
-        <div id="apartadoLista" class="apartado">
+        <!-- Lista de apartados (Oculta por defecto) -->
+        <div id="apartadoLista" class="apartado" style="display: none;">
             <h3>Lista de Apartados</h3>
             <ul>
                 <li>Datos de Identificación</li>
@@ -60,10 +60,11 @@
             </ul>
         </div>
 
-        <!-- Apartados y campos (inicialmente ocultos) -->
+        <!-- Apartados y campos (Ocultos hasta ser mencionados) -->
         <div id="apartados">
+
             <!-- DATOS DE IDENTIFICACIÓN -->
-            <div id="datosIdentificacion" class="apartado">
+            <div id="datosIdentificacion" class="apartado" style="display: none;">
                 <h3>DATOS DE IDENTIFICACIÓN</h3>
                 <div class="campo"><label>Nombre:</label> <span id="nombre"></span></div>
                 <div class="campo"><label>Identificación:</label> <span id="identificacion"></span></div>
@@ -85,19 +86,19 @@
             </div>
 
             <!-- MOTIVO DE CONSULTA -->
-            <div id="motivoConsulta" class="apartado">
+            <div id="motivoConsulta" class="apartado" style="display: none;">
                 <h3>MOTIVO DE CONSULTA</h3>
                 <div class="campo"><label>Motivo:</label> <span id="motivo"></span></div>
             </div>
 
             <!-- ENFERMEDAD ACTUAL -->
-            <div id="enfermedadActual" class="apartado">
+            <div id="enfermedadActual" class="apartado" style="display: none;">
                 <h3>ENFERMEDAD ACTUAL</h3>
                 <div class="campo"><label>Descripción:</label> <span id="enfermedad"></span></div>
             </div>
 
             <!-- ANTECEDENTES -->
-            <div id="antecedentes" class="apartado">
+            <div id="antecedentes" class="apartado" style="display: none;">
                 <h3>ANTECEDENTES</h3>
                 <div class="campo"><label>Personales:</label> <span id="personales"></span></div>
                 <div class="campo"><label>Prenatales:</label> <span id="prenatales"></span></div>
@@ -111,7 +112,7 @@
             </div>
 
             <!-- TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO -->
-            <div id="trianguloPediatrico" class="apartado">
+            <div id="trianguloPediatrico" class="apartado" style="display: none;">
                 <h3>TRIÁNGULO DE APROXIMACIÓN PEDIÁTRICO</h3>
                 <div class="campo"><label>Neurológico:</label> <span id="neurologico"></span></div>
                 <div class="campo"><label>Circulatorio:</label> <span id="circulatorio"></span></div>
@@ -119,7 +120,7 @@
             </div>
 
             <!-- VARIABLES VITALES -->
-            <div id="variablesVitales" class="apartado">
+            <div id="variablesVitales" class="apartado" style="display: none;">
                 <h3>VARIABLES VITALES</h3>
                 <div class="campo"><label>Frecuencia Cardíaca:</label> <span id="frecuencia_cardiaca"></span></div>
                 <div class="campo"><label>Frecuencia Respiratoria:</label> <span id="frecuencia_respiratoria"></span></div>
@@ -129,14 +130,14 @@
             </div>
 
             <!-- MEDIDAS ANTROPOMÉTRICAS -->
-            <div id="medidasAntropometricas" class="apartado">
+            <div id="medidasAntropometricas" class="apartado" style="display: none;">
                 <h3>MEDIDAS ANTROPOMÉTRICAS</h3>
                 <div class="campo"><label>Peso:</label> <span id="peso"></span></div>
                 <div class="campo"><label>Talla:</label> <span id="talla"></span></div>
             </div>
 
             <!-- ÍNDICES ANTROPOMÉTRICOS -->
-            <div id="indicesAntropometricos" class="apartado">
+            <div id="indicesAntropometricos" class="apartado" style="display: none;">
                 <h3>ÍNDICES ANTROPOMÉTRICOS</h3>
                 <div class="campo"><label>Talla/Edad:</label> <span id="talla_edad"></span></div>
                 <div class="campo"><label>IMC/Edad:</label> <span id="imc_edad"></span></div>
@@ -145,7 +146,7 @@
             </div>
 
             <!-- EXAMEN FÍSICO -->
-            <div id="examenFisico" class="apartado">
+            <div id="examenFisico" class="apartado" style="display: none;">
                 <h3>EXAMEN FÍSICO</h3>
                 <div class="campo"><label>Neurológico:</label> <span id="neurologico_examen"></span></div>
                 <div class="campo"><label>Cabeza:</label> <span id="cabeza"></span></div>
@@ -158,25 +159,25 @@
             </div>
 
             <!-- PARACLÍNICOS -->
-            <div id="paraclinicos" class="apartado">
+            <div id="paraclinicos" class="apartado" style="display: none;">
                 <h3>PARACLÍNICOS</h3>
                 <div class="campo"><label>Laboratorios:</label> <span id="laboratorios"></span></div>
             </div>
 
             <!-- ANÁLISIS -->
-            <div id="analisis" class="apartado">
+            <div id="analisis" class="apartado" style="display: none;">
                 <h3>ANÁLISIS</h3>
                 <div class="campo"><label>Diagnóstico Nutricional:</label> <span id="diagnostico_nutricional"></span></div>
             </div>
 
             <!-- IMPRESIÓN DIAGNÓSTICA -->
-            <div id="impresionDiagnostica" class="apartado">
+            <div id="impresionDiagnostica" class="apartado" style="display: none;">
                 <h3>IMPRESIÓN DIAGNÓSTICA</h3>
                 <div class="campo"><label>Impresión Diagnóstica:</label> <span id="impresion_diagnostica"></span></div>
             </div>
 
             <!-- PLAN -->
-            <div id="plan" class="apartado">
+            <div id="plan" class="apartado" style="display: none;">
                 <h3>PLAN</h3>
                 <div class="campo"><label>Estancia:</label> <span id="estancia"></span></div>
                 <div class="campo"><label>Dieta:</label> <span id="dieta"></span></div>
@@ -193,3 +194,4 @@
     <script src="PedIA.js"></script>
 </body>
 </html>
+
