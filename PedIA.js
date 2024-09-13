@@ -12,7 +12,6 @@ const sections = {
     "antecedentes": ["personales", "prenatales"],
     "triángulo de aproximación pediátrico": ["neurológico", "circulatorio", "respiratoria"],
     "variables vitales": ["frecuencia cardiaca", "frecuencia respiratoria", "saturación de oxígeno"]
-    // Más apartados y campos...
 };
 
 // Verifica la compatibilidad del navegador para SpeechRecognition
