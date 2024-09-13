@@ -94,7 +94,7 @@ if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
 
 // Mostrar/Ocultar instrucciones
 instructionsToggle.addEventListener('click', () => {
-    if (instructions.style.display === 'none') {
+    if (instructions.style.display === 'none' || instructions.style.display === '') {
         instructions.style.display = 'block';
         instructionsToggle.innerText = 'Ocultar Instrucciones';
     } else {
