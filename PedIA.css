@@ -46,8 +46,9 @@ body {
     margin-bottom: 20px;
 }
 
+/* Ocultar apartados inicialmente */
 .apartado {
-    display: none; /* Los apartados estarán ocultos hasta que se mencionen */
+    display: none;
     margin-top: 20px;
     text-align: left;
 }
@@ -63,4 +64,24 @@ body {
 .campo span {
     margin-left: 10px;
     font-style: italic;
+}
+
+#apartadoLista {
+    margin-top: 20px;
+}
+
+#apartadoLista ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#apartadoLista ul li {
+    background-color: #f1f1f1;
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+#apartadoLista ul li:hover {
+    background-color: #e2e2e2;
 }
