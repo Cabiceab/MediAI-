@@ -1,19 +1,7 @@
-const mysql = require('mysql2');
-require('dotenv').config();  // Cargar variables de entorno
+import { createClient } from '@supabase/supabase-js'
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-});
+const supabaseUrl = 'https://<project-ref>.supabase.co'
+const supabaseAnonKey = '<your-anon-key>'
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error conectando a la base de datos:', err);
-    return;
-  }
-  console.log('Conectado a la base de datos MySQL');
-});
-
-module.exports = db;
+// Exporta el cliente de Supabase para usarlo en otras partes de tu app
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
