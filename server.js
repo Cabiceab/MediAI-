@@ -1,16 +1,16 @@
-const express = require('express');
-const app = express();
-const authRoutes = require('./auth');
-const verifyToken = require('./verifyToken');
-require('dotenv').config();  // Cargar las variables de entorno
+const express = require('express')
+const app = express()
 
-app.use(express.json());
-app.use('/auth', authRoutes);
+// Sirve archivos estáticos
+app.use(express.static('public'))
 
-app.get('/profile', verifyToken, (req, res) => {
-    res.send(`Este es el perfil del usuario con ID ${req.userId}`);
-});
+// Supabase Auth middleware (puedes añadir la lógica aquí)
+app.get('/auth/callback', (req, res) => {
+  res.send('Autenticación completada')
+})
 
-app.listen(3000, () => {
-  console.log('Servidor corriendo en el puerto 3000');
-});
+// Configuración del puerto
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en el puerto ${PORT}`)
+})
