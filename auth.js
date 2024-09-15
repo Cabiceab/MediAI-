@@ -1,51 +1,31 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const db = require('./db');
-const Joi = require('joi');
+import { createClient } from '@supabase/supabase-js'
 
-const router = express.Router();
+// Configuración de Supabase
+const supabaseUrl = 'https://<project-ref>.supabase.co'
+const supabaseAnonKey = '<your-anon-key>'
 
-const schema = Joi.object({
-    nombre: Joi.string().min(3).required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).required()
-});
+// Crea el cliente de Supabase
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-router.post('/register', async (req, res) => {
-    const { error } = schema.validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+// Función para iniciar sesión con GitHub
+export async function signInWithGithub() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+  });
+  if (error) {
+    console.error('Error al iniciar sesión con GitHub:', error);
+  } else {
+    console.log('Sesión iniciada:', data);
+  }
+}
 
-    const { nombre, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+// Función para cerrar sesión
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error('Error al cerrar sesión:', error);
+  } else {
+    console.log('Sesión cerrada exitosamente');
+  }
+}
 
-    db.query('INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)', [nombre, email, hashedPassword], (err, result) => {
-        if (err) {
-            return res.status(500).send('Error registrando usuario');
-        }
-        res.status(200).send('Usuario registrado con éxito');
-    });
-});
-
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
-        if (err) return res.status(500).send('Error en la base de datos');
-
-        if (results.length > 0) {
-            const user = results[0];
-            const isValidPassword = await bcrypt.compare(password, user.password);
-
-            if (isValidPassword) {
-                const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-                res.status(200).json({ token });
-            } else {
-                res.status(401).send('Contraseña incorrecta');
-            }
-        } else {
-            res.status(404).send('Usuario no encontrado');
-        }
-    });
-});
-
-module.exports = router;
