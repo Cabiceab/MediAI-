@@ -1,3 +1,36 @@
+// Supabase configuration
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://<project-ref>.supabase.co'
+const supabaseAnonKey = '<your-anon-key>'
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+const githubLoginButton = document.querySelector('#githubLogin');
+const logoutButton = document.querySelector('#logout');
+
+// Login with GitHub
+githubLoginButton.addEventListener('click', async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+  });
+  if (error) {
+    console.error('Error durante el inicio de sesión:', error.message);
+  } else {
+    console.log('Sesión iniciada:', data);
+  }
+});
+
+// Logout
+logoutButton.addEventListener('click', async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    console.error('Error al cerrar sesión:', error.message);
+  } else {
+    console.log('Sesión cerrada');
+  }
+});
+
+// Tu código original para el reconocimiento de voz y manejo de apartados continúa aquí...
 const container = document.querySelector('.container');
 const signupButton = document.querySelector('.signup-section header');
 const loginButton = document.querySelector('.login-section header');
