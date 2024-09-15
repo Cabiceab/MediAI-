@@ -1,5 +1,3 @@
-# Ignorar el archivo de configuración de variables de entorno
-.env
-
-# Ignorar la carpeta node_modules (si usas Node.js)
 node_modules/
+.env
+supabase-key.json
