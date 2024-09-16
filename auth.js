@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+iimport { createClient } from '@supabase/supabase-js'
 
 // Configuración de Supabase
 const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co'
@@ -15,7 +15,19 @@ export async function signInWithGithub() {
   if (error) {
     console.error('Error al iniciar sesión con GitHub:', error);
   } else {
-    console.log('Sesión iniciada:', data);
+    console.log('Sesión iniciada con GitHub:', data);
+  }
+}
+
+// Función para iniciar sesión con Google
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+  });
+  if (error) {
+    console.error('Error al iniciar sesión con Google:', error);
+  } else {
+    console.log('Sesión iniciada con Google:', data);
   }
 }
 
@@ -28,4 +40,3 @@ export async function signOut() {
     console.log('Sesión cerrada exitosamente');
   }
 }
-
