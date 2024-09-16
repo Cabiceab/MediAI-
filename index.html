@@ -16,7 +16,7 @@
 
             <div class="social-buttons">
                 <button id="googleLoginSignup"><i class='bx bxl-google'></i> Use Google</button>
-                <button><i class='bx bxl-apple'></i> Use Apple</button>
+                <button id="githubLoginSignup"><i class='bx bxl-github'></i> Use GitHub</button>
             </div>
 
             <div class="separator">
@@ -41,7 +41,6 @@
             <div class="social-buttons">
                 <button id="googleLogin"><i class='bx bxl-google'></i> Use Google</button>
                 <button id="githubLogin"><i class='bx bxl-github'></i> Use GitHub</button>
-                <button><i class='bx bxl-apple'></i> Use Apple</button>
             </div>
 
             <div class="separator">
@@ -256,6 +255,8 @@
 
         const googleLoginButton = document.querySelector('#googleLogin');
         const githubLoginButton = document.querySelector('#githubLogin');
+        const googleSignupButton = document.querySelector('#googleLoginSignup');
+        const githubSignupButton = document.querySelector('#githubLoginSignup');
 
         // Login with Google
         googleLoginButton.addEventListener('click', async () => {
@@ -269,6 +270,18 @@
             }
         });
 
+        // Signup with Google (es igual al login en este caso)
+        googleSignupButton.addEventListener('click', async () => {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+            });
+            if (error) {
+                console.error('Error durante el signup con Google:', error.message);
+            } else {
+                console.log('Registro y sesión iniciada con Google:', data);
+            }
+        });
+
         // Login with GitHub
         githubLoginButton.addEventListener('click', async () => {
             const { data, error } = await supabase.auth.signInWithOAuth({
@@ -278,6 +291,18 @@
                 console.error('Error durante el inicio de sesión con GitHub:', error.message);
             } else {
                 console.log('Sesión iniciada con GitHub:', data);
+            }
+        });
+
+        // Signup with GitHub (es igual al login en este caso)
+        githubSignupButton.addEventListener('click', async () => {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+            });
+            if (error) {
+                console.error('Error durante el signup con GitHub:', error.message);
+            } else {
+                console.log('Registro y sesión iniciada con GitHub:', data);
             }
         });
     </script>
