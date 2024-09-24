@@ -308,5 +308,41 @@
     </script>
 
     <script src="PedIA.js"></script>
+    <script>
+    // Verifica si hay un token de acceso en la URL (por ejemplo, después de redirigir)
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+
+    if (accessToken) {
+        // Guardamos el token en el localStorage para futuras peticiones
+        localStorage.setItem('supabaseAccessToken', accessToken);
+        // Limpia la URL para que no siga mostrando el token en el query
+        window.history.replaceState({}, document.title, "/dashboard"); // O la ruta donde está la página protegida
+    } else {
+        // Si no hay token, redirige al login o página de inicio
+        if (!localStorage.getItem('supabaseAccessToken')) {
+            window.location.href = "/";
+        }
+    }
+
+    // Ejemplo de cómo usar el token en futuras peticiones
+    function hacerPeticionProtegida() {
+        const token = localStorage.getItem('supabaseAccessToken');
+        if (token) {
+            fetch('/api/protected-route', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        } else {
+            alert('No estás autenticado');
+            window.location.href = '/';
+        }
+    }
+</script>
+
 </body>
 </html>
