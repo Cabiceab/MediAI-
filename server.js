@@ -33,6 +33,39 @@ app.get('/dashboard', (req, res) => {
         res.redirect('/'); // Si no hay token, redirige al login
     }
 });
+// Agregar rutas de login y signup
+
+let users = []; // Lista de usuarios (simulación de base de datos)
+
+// Ruta de login
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    const user = users.find(user => user.username === username && user.password === password);
+
+    if (user) {
+        res.status(200).json({ message: 'Login successful' });
+    } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+    }
+});
+
+// Ruta de sign up
+app.post('/signup', (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (users.find(user => user.username === username)) {
+        return res.status(400).json({ message: 'User already exists' });
+    }
+
+    const newUser = { username, email, password };
+    users.push(newUser);
+
+    // Guardar usuarios en archivo JSON
+    fs.writeFileSync('users.json', JSON.stringify(users));
+
+    res.status(201).json({ message: 'Sign up successful' });
+});
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
