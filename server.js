@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
+const fs = require('fs'); // Importar fs para manejar archivos
 dotenv.config(); // Cargar variables de entorno
 
 const app = express();
@@ -33,22 +34,19 @@ app.get('/dashboard', (req, res) => {
     } else {
         res.redirect('/'); // Si no hay token, redirige al login
     }
-    // Simulación de base de datos de usuarios (en memoria o JSON)
+});
+
+// Simulación de base de datos de usuarios (en memoria o JSON)
 let users = [];
 
 // Leer usuarios desde el archivo JSON al iniciar el servidor
 if (fs.existsSync('users.json')) {
     users = JSON.parse(fs.readFileSync('users.json'));
 }
-// Agregar rutas de login y signup
-
-let users = []; // Lista de usuarios (simulación de base de datos)
 
 // Ruta de login
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-
-    const user = users.find(user => user.username === username && user.password === password);
 
     if (!username || !password) {
         return res.status(400).json({ message: 'Todos los campos son requeridos' });
@@ -89,3 +87,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+
