@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config(); // Cargar variables de entorno
 
 const app = express();
+app.use(express.json()); // Para leer los datos JSON del cuerpo de la petición
 
 // Sirve archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
@@ -32,7 +33,13 @@ app.get('/dashboard', (req, res) => {
     } else {
         res.redirect('/'); // Si no hay token, redirige al login
     }
-});
+    // Simulación de base de datos de usuarios (en memoria o JSON)
+let users = [];
+
+// Leer usuarios desde el archivo JSON al iniciar el servidor
+if (fs.existsSync('users.json')) {
+    users = JSON.parse(fs.readFileSync('users.json'));
+}
 // Agregar rutas de login y signup
 
 let users = []; // Lista de usuarios (simulación de base de datos)
@@ -43,10 +50,16 @@ app.post('/login', (req, res) => {
 
     const user = users.find(user => user.username === username && user.password === password);
 
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Todos los campos son requeridos' });
+    }
+
+    const user = users.find(user => user.username === username && user.password === password);
+
     if (user) {
-        res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login exitoso' });
     } else {
-        res.status(401).json({ message: 'Invalid credentials' });
+        res.status(401).json({ message: 'Credenciales incorrectas' });
     }
 });
 
@@ -54,8 +67,12 @@ app.post('/login', (req, res) => {
 app.post('/signup', (req, res) => {
     const { username, email, password } = req.body;
 
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: 'Todos los campos son requeridos' });
+    }
+
     if (users.find(user => user.username === username)) {
-        return res.status(400).json({ message: 'User already exists' });
+        return res.status(400).json({ message: 'El usuario ya existe' });
     }
 
     const newUser = { username, email, password };
@@ -64,7 +81,7 @@ app.post('/signup', (req, res) => {
     // Guardar usuarios en archivo JSON
     fs.writeFileSync('users.json', JSON.stringify(users));
 
-    res.status(201).json({ message: 'Sign up successful' });
+    res.status(201).json({ message: 'Registro exitoso' });
 });
 
 // Configuración del puerto
