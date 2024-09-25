@@ -7,17 +7,37 @@ dotenv.config(); // Cargar variables de entorno
 const app = express();
 app.use(express.json()); // Para leer los datos JSON del cuerpo de la petición
 
+// Simulación de base de datos de usuarios (en memoria o JSON)
+let users = [];
+
+// Leer usuarios desde el archivo JSON al iniciar el servidor
+if (fs.existsSync('users.json')) {
+    users = JSON.parse(fs.readFileSync('users.json'));
+    console.log('Usuarios cargados:', users); // Verificar si los usuarios se cargan correctamente
+}
+
 // Sirve archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware para verificar el token de autenticación
+const checkAuth = (req, res, next) => {
+    const token = req.query.access_token;
+    if (!token) {
+        return res.status(401).send('Acceso no autorizado. Por favor, inicia sesión.');
+    }
+    // Aquí podrías validar el token con Supabase si fuera necesario
+    next(); // Si el token es válido, continúa con la ruta protegida
+};
 
 // Supabase Auth middleware para manejar el callback de OAuth
 app.get('/auth/callback', (req, res) => {
     const accessToken = req.query.access_token; // Obtenemos el token de acceso
     if (accessToken) {
+        console.log('Access Token:', accessToken); // Log para verificar si llega el token
         // Redirigimos al cliente pasando el token como parámetro en la URL
         res.redirect(`/dashboard?access_token=${accessToken}`);
     } else {
-        res.send('Error al autenticar');
+        res.status(401).send('Error al autenticar. No se recibió un token.');
     }
 });
 
@@ -26,23 +46,10 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Ruta protegida: dashboard
-app.get('/dashboard', (req, res) => {
-    const token = req.query.access_token;
-    if (token) {
-        res.sendFile(path.join(__dirname, 'public/dashboard.html')); // Una página protegida
-    } else {
-        res.redirect('/'); // Si no hay token, redirige al login
-    }
+// Ruta protegida: dashboard (protección con middleware)
+app.get('/dashboard', checkAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/dashboard.html')); // Una página protegida
 });
-
-// Simulación de base de datos de usuarios (en memoria o JSON)
-let users = [];
-
-// Leer usuarios desde el archivo JSON al iniciar el servidor
-if (fs.existsSync('users.json')) {
-    users = JSON.parse(fs.readFileSync('users.json'));
-}
 
 // Ruta de login
 app.post('/login', (req, res) => {
@@ -87,4 +94,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
-
