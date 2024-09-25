@@ -1,49 +1,80 @@
-
 // Supabase configuration
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co'
-const supabaseAnonKey = '<eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q>'
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
-// Configuración de Supabase
-const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q'
+const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q';
 
-// Crea el cliente de Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 // Botones para iniciar sesión con Google y GitHub
 const googleLoginButton = document.querySelector('#googleLogin');
 const githubLoginButton = document.querySelector('#githubLogin');
-const logoutButton = document.querySelector('#logout');
+const googleSignupButton = document.querySelector('#googleLoginSignup');
+const githubSignupButton = document.querySelector('#githubLoginSignup');
+
+// Login with Google
+googleLoginButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con Google:', error.message);
+    } else {
+        console.log('Sesión iniciada con Google:', data);
+    }
+});
+
+// Signup with Google (es igual al login en este caso)
+googleSignupButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+    });
+    if (error) {
+        console.error('Error durante el signup con Google:', error.message);
+    } else {
+        console.log('Registro y sesión iniciada con Google:', data);
+    }
+});
 
 // Login with GitHub
-// Login con Google
-googleLoginButton.addEventListener('click', async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-  });
-  if (error) {
-    console.error('Error durante el inicio de sesión con Google:', error.message);
-  } else {
-    console.log('Sesión iniciada con Google:', data);
-  }
-});
-// Login con GitHub
 githubLoginButton.addEventListener('click', async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-  });
-  if (error) {
-    console.error('Error durante el inicio de sesión:', error.message);
-    console.error('Error durante el inicio de sesión con GitHub:', error.message);
-  } else {
-    console.log('Sesión iniciada:', data);
-    console.log('Sesión iniciada con GitHub:', data);
-  }
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con GitHub:', error.message);
+    } else {
+        console.log('Sesión iniciada con GitHub:', data);
+    }
 });
 
-  }
+// Signup with GitHub (es igual al login en este caso)
+githubSignupButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+    });
+    if (error) {
+        console.error('Error durante el signup con GitHub:', error.message);
+    } else {
+        console.log('Registro y sesión iniciada con GitHub:', data);
+    }
 });
+
+// Manejo de token de acceso (después de login OAuth)
+const urlParams = new URLSearchParams(window.location.search);
+const accessToken = urlParams.get('access_token');
+
+if (accessToken) {
+    // Guardamos el token en el localStorage para futuras peticiones
+    localStorage.setItem('supabaseAccessToken', accessToken);
+    // Limpia la URL para que no siga mostrando el token en el query
+    window.history.replaceState({}, document.title, "/dashboard");
+} else {
+    // Si no hay token, redirige al login o página de inicio
+    if (!localStorage.getItem('supabaseAccessToken')) {
+        window.location.href = "/";
+    }
+}
 
 // Tu código original para el reconocimiento de voz y manejo de apartados continúa aquí...
 // Código para la interfaz de reconocimiento de voz y manejo de apartados
@@ -59,6 +90,7 @@ loginButton.addEventListener('click', () => {
 signupButton.addEventListener('click', () => {
     container.classList.remove('active');
 });
+
 // Verificar compatibilidad con SpeechRecognition
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
