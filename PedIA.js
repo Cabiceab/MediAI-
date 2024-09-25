@@ -14,28 +14,33 @@ const logoutButton = document.querySelector('#logout');
 
 // Login con Google
 googleLoginButton.addEventListener('click', async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-  });
-  if (error) {
-    console.error('Error durante el inicio de sesión con Google:', error.message);
-  } else {
-    console.log('Sesión iniciada con Google:', data);
-  }
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${window.location.origin}/auth/callback`, // Redirige a esta ruta después del login
+        },
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con Google:', error.message);
+    } else {
+        console.log('Sesión iniciada con Google:', data);
+    }
 });
 
 // Login con GitHub
 githubLoginButton.addEventListener('click', async () => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'github',
-  });
-  if (error) {
-    console.error('Error durante el inicio de sesión con GitHub:', error.message);
-  } else {
-    console.log('Sesión iniciada con GitHub:', data);
-  }
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+            redirectTo: `${window.location.origin}/auth/callback`, // Redirige a esta ruta después del login
+        },
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con GitHub:', error.message);
+    } else {
+        console.log('Sesión iniciada con GitHub:', data);
+    }
 });
-
 // Logout
 logoutButton.addEventListener('click', async () => {
   const { error } = await supabase.auth.signOut();
