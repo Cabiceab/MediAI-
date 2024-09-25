@@ -2,10 +2,17 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 const fs = require('fs'); // Importar fs para manejar archivos
+const { createClient } = require('@supabase/supabase-js'); // Importar Supabase
+
 dotenv.config(); // Cargar variables de entorno
 
 const app = express();
 app.use(express.json()); // Para leer los datos JSON del cuerpo de la petición
+
+// Configuración de Supabase
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Simulación de base de datos de usuarios (en memoria o JSON)
 let users = [];
@@ -19,14 +26,32 @@ if (fs.existsSync('users.json')) {
 // Sirve archivos estáticos desde la carpeta "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware para verificar el token de autenticación
-const checkAuth = (req, res, next) => {
+// Middleware para verificar el token de autenticación con Supabase
+const checkAuth = async (req, res, next) => {
     const token = req.query.access_token;
+
+    // Validar que se envió un token
     if (!token) {
-        return res.status(401).send('Acceso no autorizado. Por favor, inicia sesión.');
+        return res.status(401).send('Acceso no autorizado. No se proporcionó un token.');
     }
-    // Aquí podrías validar el token con Supabase si fuera necesario
-    next(); // Si el token es válido, continúa con la ruta protegida
+
+    try {
+        // Validar el token con Supabase
+        const { data, error } = await supabase.auth.getUser(token);
+
+        if (error) {
+            console.error('Error al validar el token con Supabase:', error.message);
+            return res.status(401).send('Token inválido o expirado. Por favor, inicia sesión nuevamente.');
+        }
+
+        // Si el token es válido, continuar con la solicitud
+        console.log('Token válido:', data);
+        next();
+
+    } catch (err) {
+        console.error('Error interno al validar el token:', err);
+        res.status(500).send('Error interno del servidor.');
+    }
 };
 
 // Supabase Auth middleware para manejar el callback de OAuth
