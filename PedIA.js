@@ -1,56 +1,51 @@
+
+// Supabase configuration
 import { createClient } from '@supabase/supabase-js'
 
+const supabaseUrl = 'https://<project-ref>.supabase.co'
+const supabaseAnonKey = '<your-anon-key>'
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 // Configuración de Supabase
 const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co'
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q'
 
 // Crea el cliente de Supabase
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
 // Botones para iniciar sesión con Google y GitHub
 const googleLoginButton = document.querySelector('#googleLogin');
 const githubLoginButton = document.querySelector('#githubLogin');
 const logoutButton = document.querySelector('#logout');
 
+// Login with GitHub
 // Login con Google
 googleLoginButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: `${window.location.origin}/auth/callback`, // Redirige a esta ruta después del login
-        },
-    });
-    if (error) {
-        console.error('Error durante el inicio de sesión con Google:', error.message);
-    } else {
-        console.log('Sesión iniciada con Google:', data);
-    }
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+  });
+  if (error) {
+    console.error('Error durante el inicio de sesión con Google:', error.message);
+  } else {
+    console.log('Sesión iniciada con Google:', data);
+  }
 });
-
 // Login con GitHub
 githubLoginButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-            redirectTo: `${window.location.origin}/auth/callback`, // Redirige a esta ruta después del login
-        },
-    });
-    if (error) {
-        console.error('Error durante el inicio de sesión con GitHub:', error.message);
-    } else {
-        console.log('Sesión iniciada con GitHub:', data);
-    }
-});
-// Logout
-logoutButton.addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+  });
   if (error) {
-    console.error('Error al cerrar sesión:', error.message);
+    console.error('Error durante el inicio de sesión:', error.message);
+    console.error('Error durante el inicio de sesión con GitHub:', error.message);
   } else {
-    console.log('Sesión cerrada');
+    console.log('Sesión iniciada:', data);
+    console.log('Sesión iniciada con GitHub:', data);
   }
 });
 
+  }
+});
+
+// Tu código original para el reconocimiento de voz y manejo de apartados continúa aquí...
 // Código para la interfaz de reconocimiento de voz y manejo de apartados
 const container = document.querySelector('.container');
 const signupButton = document.querySelector('.signup-section header');
@@ -64,7 +59,6 @@ loginButton.addEventListener('click', () => {
 signupButton.addEventListener('click', () => {
     container.classList.remove('active');
 });
-
 // Verificar compatibilidad con SpeechRecognition
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
