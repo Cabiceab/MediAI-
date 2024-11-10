@@ -49,7 +49,7 @@ async function verificarAutenticacion() {
     if (!token || isTokenExpired(token)) {
         localStorage.removeItem('supabaseAccessToken');
         if (isProtectedRoute()) {
-            safeRedirect('/');
+            safeRedirect('/index.html');
         }
         return false;
     }
@@ -60,7 +60,7 @@ async function hacerPeticionProtegida() {
     const token = localStorage.getItem('supabaseAccessToken');
     if (!token) {
         console.error('No hay token de autenticación');
-        safeRedirect('/');
+        safeRedirect('/index.html');
         return;
     }
 
@@ -73,7 +73,7 @@ async function hacerPeticionProtegida() {
         
         if (response.status === 401) {
             localStorage.removeItem('supabaseAccessToken');
-            safeRedirect('/');
+            safeRedirect('/index.html');
             return;
         }
 
@@ -263,10 +263,12 @@ recognition.onresult = (event) => {
         if (transcript.includes(section)) {
             const sectionId = sectionToId(section);
             const sectionDiv = document.getElementById(sectionId);
-            hideAllFields(sectionDiv);
-            showFields(sectionDiv);
-            resultText.innerText = `Apartado "${section}" seleccionado. Ahora menciona los campos.`;
-            currentSection = section;
+            if (sectionDiv) {
+                hideAllFields(sectionDiv);
+                showFields(sectionDiv);
+                resultText.innerText = `Apartado "${section}" seleccionado. Ahora menciona los campos.`;
+                currentSection = section;
+            }
         }
     });
 
@@ -280,11 +282,24 @@ recognition.onresult = (event) => {
 
         if (currentField) {
             let value = transcript.replace(currentField, '').trim();
-            document.getElementById(currentField).innerText = value;
-            resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
-            currentField = null;
+            const fieldElement = document.getElementById(currentField);
+            if (fieldElement) {
+                fieldElement.innerText = value;
+                resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
+                currentField = null;
+            }
         }
     }
+};
+
+// Manejo de errores del reconocimiento de voz
+recognition.onerror = (event) => {
+    console.error('Error en el reconocimiento de voz:', event.error);
+    resultText.innerText = `Error en el reconocimiento de voz: ${event.error}`;
+};
+
+recognition.onend = () => {
+    console.log('El reconocimiento de voz ha terminado');
 };
 
 // Mostrar/Ocultar instrucciones
@@ -304,5 +319,6 @@ function sectionToId(section) {
     return section.replace(/\s+/g, '').toLowerCase();
 }
 Last edited just now
+
 
 
