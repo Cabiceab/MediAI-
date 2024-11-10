@@ -1,95 +1,51 @@
-// Supabase configuration
+// ============= CONFIGURACIÓN DE SUPABASE Y AUTENTICACIÓN =============
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q';
-
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Botones para iniciar sesión con Google y GitHub
+// Botones de autenticación
 const googleLoginButton = document.querySelector('#googleLogin');
 const githubLoginButton = document.querySelector('#githubLogin');
 const googleSignupButton = document.querySelector('#googleLoginSignup');
 const githubSignupButton = document.querySelector('#githubLoginSignup');
 
-// Login with Google
-googleLoginButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-    });
-    if (error) {
-        console.error('Error durante el inicio de sesión con Google:', error.message);
-    } else {
-        console.log('Sesión iniciada con Google:', data);
-    }
-});
-
-// Signup with Google (es igual al login en este caso)
-googleSignupButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-    });
-    if (error) {
-        console.error('Error durante el signup con Google:', error.message);
-    } else {
-        console.log('Registro y sesión iniciada con Google:', data);
-    }
-});
-
-// Login with GitHub
-githubLoginButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-    });
-    if (error) {
-        console.error('Error durante el inicio de sesión con GitHub:', error.message);
-    } else {
-        console.log('Sesión iniciada con GitHub:', data);
-    }
-});
-
-// Signup with GitHub (es igual al login en este caso)
-githubSignupButton.addEventListener('click', async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-    });
-    if (error) {
-        console.error('Error durante el signup con GitHub:', error.message);
-    } else {
-        console.log('Registro y sesión iniciada con GitHub:', data);
-    }
-});
-
-// Verifica si hay un token de acceso en la URL
+// Variables para manejo de autenticación
 const urlParams = new URLSearchParams(window.location.search);
 const accessToken = urlParams.get('access_token');
 const currentPath = window.location.pathname;
 
-// Función para verificar si estamos en una ruta protegida
+// Funciones de autenticación
 function isProtectedRoute() {
-    const protectedRoutes = ['/dashboard']; // Añade aquí otras rutas protegidas
+    const protectedRoutes = ['/dashboard'];
     return protectedRoutes.includes(currentPath);
 }
 
-// Manejo de la autenticación
-if (accessToken) {
-    // Si tenemos un token en la URL, lo guardamos
-    localStorage.setItem('supabaseAccessToken', accessToken);
-    window.history.replaceState({}, document.title, "/dashboard");
-} else {
-    // Si no hay token en la URL, verificamos el localStorage
-    const storedToken = localStorage.getItem('supabaseAccessToken');
-    
-    if (!storedToken && isProtectedRoute()) {
-        // Solo redirigimos si estamos en una ruta protegida y no hay token
-        window.location.href = "/";
-    } else if (storedToken && currentPath === '/') {
-        // Si tenemos token y estamos en la página principal, redirigimos al dashboard
-        window.location.href = "/dashboard";
+function isTokenExpired(token) {
+    if (!token) return true;
+    try {
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = tokenPayload.exp * 1000;
+        return Date.now() >= expirationTime;
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        return true;
     }
 }
 
-// Función para hacer peticiones protegidas
+async function verificarAutenticacion() {
+    const token = localStorage.getItem('supabaseAccessToken');
+    if (!token || isTokenExpired(token)) {
+        localStorage.removeItem('supabaseAccessToken');
+        if (isProtectedRoute()) {
+            window.location.href = '/';
+        }
+        return false;
+    }
+    return true;
+}
+
 async function hacerPeticionProtegida() {
     const token = localStorage.getItem('supabaseAccessToken');
     if (!token) {
@@ -106,7 +62,6 @@ async function hacerPeticionProtegida() {
         });
         
         if (response.status === 401) {
-            // Token inválido o expirado
             localStorage.removeItem('supabaseAccessToken');
             window.location.href = '/';
             return;
@@ -119,40 +74,69 @@ async function hacerPeticionProtegida() {
         throw error;
     }
 }
-// Función para verificar si el token ha expirado
-function isTokenExpired(token) {
-    if (!token) return true;
-    
-    try {
-        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-        const expirationTime = tokenPayload.exp * 1000; // Convertir a milisegundos
-        return Date.now() >= expirationTime;
-    } catch (error) {
-        console.error('Error al verificar el token:', error);
-        return true;
+
+// Event Listeners para botones de autenticación
+googleLoginButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con Google:', error.message);
+    } else {
+        console.log('Sesión iniciada con Google:', data);
+    }
+});
+
+googleSignupButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+    });
+    if (error) {
+        console.error('Error durante el signup con Google:', error.message);
+    } else {
+        console.log('Registro y sesión iniciada con Google:', data);
+    }
+});
+
+githubLoginButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+    });
+    if (error) {
+        console.error('Error durante el inicio de sesión con GitHub:', error.message);
+    } else {
+        console.log('Sesión iniciada con GitHub:', data);
+    }
+});
+
+githubSignupButton.addEventListener('click', async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+    });
+    if (error) {
+        console.error('Error durante el signup con GitHub:', error.message);
+    } else {
+        console.log('Registro y sesión iniciada con GitHub:', data);
+    }
+});
+
+// Manejo inicial de la autenticación
+if (accessToken) {
+    localStorage.setItem('supabaseAccessToken', accessToken);
+    window.history.replaceState({}, document.title, "/dashboard");
+} else {
+    const storedToken = localStorage.getItem('supabaseAccessToken');
+    if (!storedToken && isProtectedRoute()) {
+        window.location.href = "/";
+    } else if (storedToken && currentPath === '/') {
+        window.location.href = "/dashboard";
     }
 }
 
-// Función para verificar la autenticación
-async function verificarAutenticacion() {
-    const token = localStorage.getItem('supabaseAccessToken');
-    
-    if (!token || isTokenExpired(token)) {
-        localStorage.removeItem('supabaseAccessToken');
-        if (isProtectedRoute()) {
-            window.location.href = '/';
-        }
-        return false;
-    }
-    
-    return true;
-}
+// Verificación periódica de autenticación
+setInterval(verificarAutenticacion, 60000);
 
-// Verificar la autenticación periódicamente
-setInterval(verificarAutenticacion, 60000); // Verificar cada minuto
-
-// Tu código original para el reconocimiento de voz y manejo de apartados continúa aquí...
-// Código para la interfaz de reconocimiento de voz y manejo de apartados
+// ============= CÓDIGO DE RECONOCIMIENTO DE VOZ Y MANEJO DE APARTADOS =============
 const container = document.querySelector('.container');
 const signupButton = document.querySelector('.signup-section header');
 const loginButton = document.querySelector('.login-section header');
@@ -176,14 +160,14 @@ recognition.lang = 'es-ES';
 // Variables de los botones e inputs
 const recordButton = document.getElementById('startListening');
 const resultText = document.querySelector('.resultText');
-const apartados = document.querySelectorAll('.apartado'); // Todos los apartados
-const apartadoLista = document.getElementById('apartadoLista'); // Lista de apartados
-const apartadoItems = document.querySelectorAll('.apartado h3'); // Títulos de los apartados (h3)
+const apartados = document.querySelectorAll('.apartado');
+const apartadoLista = document.getElementById('apartadoLista');
+const apartadoItems = document.querySelectorAll('.apartado h3');
 
-let currentField = null; // Campo actual que se llenará
-let currentSection = null; // Apartado actual que se desplegará
+let currentField = null;
+let currentSection = null;
 
-// Apartados y campos esperados (coinciden con el HTML)
+// Apartados y campos esperados
 const sections = {
     "datos de identificación": ["nombre", "identificacion", "edad", "fecha_nacimiento", "escolaridad", "eps", "natural", "residente", "procedente", "direccion", "telefono", "nombre_acompanante", "parentesco", "edad_acompanante", "ocupacion", "confiabilidad", "fecha_ingreso"],
     "motivo de consulta": ["motivo"],
@@ -200,59 +184,53 @@ const sections = {
     "plan": ["estancia", "dieta", "farmacologicos_plan", "paraclinicos_plan", "cuidados_enfermeria"]
 };
 
-// Mostrar la lista de apartados y todos los apartados al hacer clic en "Start Listening"
+// Event Listeners y funciones para reconocimiento de voz
 recordButton.addEventListener('click', () => {
-    apartadoLista.style.display = 'block'; // Mostrar la lista de apartados
+    apartadoLista.style.display = 'block';
     apartados.forEach(apartado => {
-        apartado.style.display = 'block'; // Mostrar todos los apartados
+        apartado.style.display = 'block';
     });
-    recognition.start(); // Iniciar el reconocimiento de voz
+    recognition.start();
     resultText.innerText = 'Apartados desplegados. Ahora menciona el apartado que deseas llenar.';
 });
 
-// Función para ocultar todos los campos dentro de un apartado
 function hideAllFields(section) {
     const fields = section.querySelectorAll('.campo');
     fields.forEach(field => {
-        field.style.display = 'none'; // Ocultar todos los campos dentro del apartado
+        field.style.display = 'none';
     });
 }
 
-// Función para mostrar los campos de un apartado
 function showFields(section) {
     const fields = section.querySelectorAll('.campo');
     fields.forEach(field => {
-        field.style.display = 'block'; // Mostrar los campos dentro del apartado
+        field.style.display = 'block';
     });
 }
 
-// Al hacer clic en un título de apartado, mostrar los campos correspondientes
 apartadoItems.forEach(item => {
     item.addEventListener('click', (e) => {
-        const section = e.target.parentElement; // Obtener el apartado correspondiente
-        hideAllFields(section); // Ocultar todos los campos al inicio
-        showFields(section); // Mostrar los campos del apartado seleccionado
+        const section = e.target.parentElement;
+        hideAllFields(section);
+        showFields(section);
     });
 });
 
-// Manejador de resultados del reconocimiento de voz
 recognition.onresult = (event) => {
-    let transcript = event.results[0][0].transcript.toLowerCase(); // Transcripción del reconocimiento de voz
+    let transcript = event.results[0][0].transcript.toLowerCase();
     resultText.innerText = `Dijiste: "${transcript}"`;
 
-    // Buscar el apartado mencionado
     Object.keys(sections).forEach(section => {
         if (transcript.includes(section)) {
             const sectionId = sectionToId(section);
             const sectionDiv = document.getElementById(sectionId);
-            hideAllFields(sectionDiv); // Ocultar todos los campos dentro de ese apartado
-            showFields(sectionDiv); // Mostrar los campos del apartado mencionado
+            hideAllFields(sectionDiv);
+            showFields(sectionDiv);
             resultText.innerText = `Apartado "${section}" seleccionado. Ahora menciona los campos.`;
-            currentSection = section; // Guardar el apartado actual
+            currentSection = section;
         }
     });
 
-    // Si se menciona un campo dentro del apartado actual, llenar el valor
     if (currentSection) {
         sections[currentSection].forEach(field => {
             if (transcript.includes(field)) {
@@ -261,12 +239,11 @@ recognition.onresult = (event) => {
             }
         });
 
-        // Llenado del campo con el valor proporcionado por el usuario
         if (currentField) {
-            let value = transcript.replace(currentField, '').trim(); // Obtener el valor mencionado
-            document.getElementById(currentField).innerText = value; // Actualizar el campo
+            let value = transcript.replace(currentField, '').trim();
+            document.getElementById(currentField).innerText = value;
             resultText.innerText = `Campo "${currentField}" actualizado con el valor: ${value}`;
-            currentField = null; // Reiniciar el campo
+            currentField = null;
         }
     }
 };
@@ -284,7 +261,6 @@ instructionsToggle.addEventListener('click', () => {
     }
 });
 
-// Función auxiliar para convertir nombre de sección a ID
 function sectionToId(section) {
-    return section.replace(/\s+/g, '').toLowerCase(); // Convertir nombre de la sección a ID
+    return section.replace(/\s+/g, '').toLowerCase();
 }
