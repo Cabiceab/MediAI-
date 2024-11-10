@@ -120,19 +120,40 @@ githubSignupButton.addEventListener('click', async () => {
     }
 });
 
-// Manejo inicial de la autenticación
-if (accessToken) {
-    localStorage.setItem('supabaseAccessToken', accessToken);
-    window.history.replaceState({}, document.title, "/dashboard");
-} else {
+// Manejo de la autenticación
+async function handleAuth() {
+    if (accessToken) {
+        // Si tenemos un token en la URL, lo guardamos
+        localStorage.setItem('supabaseAccessToken', accessToken);
+        window.history.replaceState({}, document.title, "/dashboard");
+        return;
+    }
+
     const storedToken = localStorage.getItem('supabaseAccessToken');
+    
+    // Si no hay token almacenado y estamos en una ruta protegida
     if (!storedToken && isProtectedRoute()) {
         window.location.href = "/";
-    } else if (storedToken && currentPath === '/') {
+        return;
+    }
+
+    // Si hay token pero está expirado
+    if (storedToken && isTokenExpired(storedToken)) {
+        localStorage.removeItem('supabaseAccessToken');
+        if (isProtectedRoute()) {
+            window.location.href = "/";
+        }
+        return;
+    }
+
+    // Si hay token válido y estamos en la página principal
+    if (storedToken && !isTokenExpired(storedToken) && currentPath === '/') {
         window.location.href = "/dashboard";
     }
 }
 
+// Ejecutar el manejo de autenticación
+handleAuth();
 // Verificación periódica de autenticación
 setInterval(verificarAutenticacion, 60000);
 
