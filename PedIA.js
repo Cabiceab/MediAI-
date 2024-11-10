@@ -60,21 +60,96 @@ githubSignupButton.addEventListener('click', async () => {
     }
 });
 
-// Manejo de token de acceso (después de login OAuth)
+// Verifica si hay un token de acceso en la URL
 const urlParams = new URLSearchParams(window.location.search);
 const accessToken = urlParams.get('access_token');
+const currentPath = window.location.pathname;
 
+// Función para verificar si estamos en una ruta protegida
+function isProtectedRoute() {
+    const protectedRoutes = ['/dashboard']; // Añade aquí otras rutas protegidas
+    return protectedRoutes.includes(currentPath);
+}
+
+// Manejo de la autenticación
 if (accessToken) {
-    // Guardamos el token en el localStorage para futuras peticiones
+    // Si tenemos un token en la URL, lo guardamos
     localStorage.setItem('supabaseAccessToken', accessToken);
-    // Limpia la URL para que no siga mostrando el token en el query
     window.history.replaceState({}, document.title, "/dashboard");
 } else {
-    // Si no hay token, redirige al login o página de inicio
-    if (!localStorage.getItem('supabaseAccessToken')) {
+    // Si no hay token en la URL, verificamos el localStorage
+    const storedToken = localStorage.getItem('supabaseAccessToken');
+    
+    if (!storedToken && isProtectedRoute()) {
+        // Solo redirigimos si estamos en una ruta protegida y no hay token
         window.location.href = "/";
+    } else if (storedToken && currentPath === '/') {
+        // Si tenemos token y estamos en la página principal, redirigimos al dashboard
+        window.location.href = "/dashboard";
     }
 }
+
+// Función para hacer peticiones protegidas
+async function hacerPeticionProtegida() {
+    const token = localStorage.getItem('supabaseAccessToken');
+    if (!token) {
+        console.error('No hay token de autenticación');
+        window.location.href = '/';
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/protected-route', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.status === 401) {
+            // Token inválido o expirado
+            localStorage.removeItem('supabaseAccessToken');
+            window.location.href = '/';
+            return;
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error en la petición:', error);
+        throw error;
+    }
+}
+// Función para verificar si el token ha expirado
+function isTokenExpired(token) {
+    if (!token) return true;
+    
+    try {
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = tokenPayload.exp * 1000; // Convertir a milisegundos
+        return Date.now() >= expirationTime;
+    } catch (error) {
+        console.error('Error al verificar el token:', error);
+        return true;
+    }
+}
+
+// Función para verificar la autenticación
+async function verificarAutenticacion() {
+    const token = localStorage.getItem('supabaseAccessToken');
+    
+    if (!token || isTokenExpired(token)) {
+        localStorage.removeItem('supabaseAccessToken');
+        if (isProtectedRoute()) {
+            window.location.href = '/';
+        }
+        return false;
+    }
+    
+    return true;
+}
+
+// Verificar la autenticación periódicamente
+setInterval(verificarAutenticacion, 60000); // Verificar cada minuto
 
 // Tu código original para el reconocimiento de voz y manejo de apartados continúa aquí...
 // Código para la interfaz de reconocimiento de voz y manejo de apartados
