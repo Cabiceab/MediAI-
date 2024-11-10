@@ -5,6 +5,16 @@ const supabaseUrl = 'https://itrtgoozuuygamciugrk.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0cnRnb296dXV5Z2FtY2l1Z3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYyNzYzNTIsImV4cCI6MjA0MTg1MjM1Mn0.sGWSOYHfflAXDmQUJp4ngx4Z0K4_YUhYU_hku77-B1Q';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Prevenir redirecciones múltiples
+let isRedirecting = false;
+
+// Función helper para redirección segura
+function safeRedirect(url) {
+    if (isRedirecting) return;
+    isRedirecting = true;
+    window.location.href = url;
+}
+
 // Botones de autenticación
 const googleLoginButton = document.querySelector('#googleLogin');
 const githubLoginButton = document.querySelector('#githubLogin');
@@ -14,12 +24,12 @@ const githubSignupButton = document.querySelector('#githubLoginSignup');
 // Variables para manejo de autenticación
 const urlParams = new URLSearchParams(window.location.search);
 const accessToken = urlParams.get('access_token');
-const currentPath = window.location.pathname;
+const currentPath = window.location.pathname.replace(/\/$/, ''); // Elimina la barra final si existe
 
 // Funciones de autenticación
 function isProtectedRoute() {
-    const protectedRoutes = ['/dashboard'];
-    return protectedRoutes.includes(currentPath);
+    const protectedRoutes = ['/dashboard', '/dashboard.html'];
+    return protectedRoutes.some(route => currentPath.includes(route));
 }
 
 function isTokenExpired(token) {
@@ -39,7 +49,7 @@ async function verificarAutenticacion() {
     if (!token || isTokenExpired(token)) {
         localStorage.removeItem('supabaseAccessToken');
         if (isProtectedRoute()) {
-            window.location.href = '/';
+            safeRedirect('/');
         }
         return false;
     }
@@ -50,7 +60,7 @@ async function hacerPeticionProtegida() {
     const token = localStorage.getItem('supabaseAccessToken');
     if (!token) {
         console.error('No hay token de autenticación');
-        window.location.href = '/';
+        safeRedirect('/');
         return;
     }
 
@@ -63,7 +73,7 @@ async function hacerPeticionProtegida() {
         
         if (response.status === 401) {
             localStorage.removeItem('supabaseAccessToken');
-            window.location.href = '/';
+            safeRedirect('/');
             return;
         }
 
@@ -122,41 +132,49 @@ githubSignupButton.addEventListener('click', async () => {
 
 // Manejo de la autenticación
 async function handleAuth() {
-    if (accessToken) {
-        // Si tenemos un token en la URL, lo guardamos
-        localStorage.setItem('supabaseAccessToken', accessToken);
-        window.history.replaceState({}, document.title, "/dashboard");
-        return;
-    }
+    console.log('Current path:', currentPath); // Para debugging
 
-    const storedToken = localStorage.getItem('supabaseAccessToken');
-    
-    // Si no hay token almacenado y estamos en una ruta protegida
-    if (!storedToken && isProtectedRoute()) {
-        window.location.href = "/";
-        return;
-    }
-
-    // Si hay token pero está expirado
-    if (storedToken && isTokenExpired(storedToken)) {
-        localStorage.removeItem('supabaseAccessToken');
-        if (isProtectedRoute()) {
-            window.location.href = "/";
+    // Si estamos en la página de login
+    if (currentPath === '' || currentPath === '/' || currentPath === '/index' || currentPath === '/index.html') {
+        const storedToken = localStorage.getItem('supabaseAccessToken');
+        if (storedToken && !isTokenExpired(storedToken)) {
+            console.log('Token válido encontrado en página de login, redirigiendo a dashboard');
+            safeRedirect("/dashboard.html");
+            return;
         }
+        // Si no hay token o está expirado, nos quedamos en la página de login
         return;
     }
 
-    // Si hay token válido y estamos en la página principal
-    if (storedToken && !isTokenExpired(storedToken) && currentPath === '/') {
-        window.location.href = "/dashboard";
+    // Si estamos en una ruta protegida
+    if (isProtectedRoute()) {
+        // Si hay token en la URL
+        if (accessToken) {
+            console.log('Token encontrado en URL');
+            localStorage.setItem('supabaseAccessToken', accessToken);
+            // Limpiamos la URL solo si no estamos ya en dashboard
+            if (!currentPath.includes('dashboard')) {
+                safeRedirect("/dashboard.html");
+            }
+            return;
+        }
+
+        // Verificar token almacenado
+        const storedToken = localStorage.getItem('supabaseAccessToken');
+        if (!storedToken || isTokenExpired(storedToken)) {
+            console.log('No hay token válido para ruta protegida');
+            localStorage.removeItem('supabaseAccessToken');
+            safeRedirect("/index.html");
+            return;
+        }
     }
 }
 
 // Ejecutar el manejo de autenticación
 handleAuth();
-// Verificación periódica de autenticación
-setInterval(verificarAutenticacion, 60000);
 
+// Verificación periódica de autenticación
+setInterval(verificarAutenticacion, 300000); // Cada 5 minutos
 // ============= CÓDIGO DE RECONOCIMIENTO DE VOZ Y MANEJO DE APARTADOS =============
 const container = document.querySelector('.container');
 const signupButton = document.querySelector('.signup-section header');
@@ -285,3 +303,6 @@ instructionsToggle.addEventListener('click', () => {
 function sectionToId(section) {
     return section.replace(/\s+/g, '').toLowerCase();
 }
+Last edited just now
+
+
