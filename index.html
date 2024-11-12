@@ -3,83 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador de Radiografías de Tórax</title>
-    <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- CSS personalizado -->
-    <link rel="stylesheet" href="styles.css">
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4006/4006511.png">
+    <title>AI Medical Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff4b4b 0%, #dc1a5c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-cross {
+            font-size: 40px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .title-container {
+            flex-grow: 1;
+        }
+
+        .main-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex-grow: 1;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            border: 2px dashed #ddd;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section.dragover {
+            border-color: #dc1a5c;
+            background-color: #fff5f5;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff4b4b 0%, #dc1a5c 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #previewContainer {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        #previewImage {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .error {
+            display: none;
+            color: #dc3545;
+            background: #fff5f5;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        #result {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .footer {
+            background: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .team-members {
+            color: #666;
+            margin: 1rem 0;
+        }
+    </style>
 </head>
 <body>
-    <!-- Partículas de fondo -->
-    <div id="particles-js"></div>
-
-    <div class="container">
-        <!-- Header con navegación -->
-        <nav class="nav-header">
-            <a href="/" class="nav-logo">
-                <img src="https://cdn-icons-png.flaticon.com/512/4006/4006511.png" alt="Logo" class="logo-img">
-                <span>AI Medical Analyzer</span>
-            </a>
-        </nav>
-
-        <main class="main-content">
-            <h1>Analizador de Radiografías de Tórax</h1>
-            <p class="subtitle">Sistema avanzado de análisis de imágenes médicas</p>
-            
-            <div class="upload-section" id="dropZone">
-                <div class="upload-icon">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2983/2983788.png" alt="Upload" class="upload-img">
-                </div>
-                <p class="upload-text">Arrastra una radiografía de tórax aquí o</p>
-                <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                <button class="btn primary-btn" onclick="document.getElementById('fileInput').click()">
-                    <span class="btn-text">Subir Imagen</span>
-                </button>
-                <p class="upload-info">Formatos soportados: JPEG, PNG, DICOM</p>
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo">
+                <div class="logo-cross">+</div>
             </div>
-
-            <div id="previewContainer" class="preview-container">
-                <img id="previewImage" alt="Vista previa" class="preview-image">
-                <canvas id="annotationCanvas" class="annotation-canvas"></canvas>
+            <div class="title-container">
+                <h1 class="main-title">AI Medical Analyzer</h1>
+                <p class="subtitle">Sistema avanzado de análisis de imágenes médicas</p>
             </div>
+        </div>
+    </header>
 
-            <div class="action-container">
-                <button class="btn analyze-btn" id="analyzeBtn" disabled onclick="analyzeImage()">
-                    <span class="btn-icon">🔍</span>
-                    <span class="btn-text">Analizar Radiografía</span>
-                </button>
-            </div>
+    <main class="main-content">
+        <div class="upload-section" id="dropZone">
+            <div class="upload-icon">📤</div>
+            <p>Arrastra una radiografía de tórax aquí o</p>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">
+                Seleccionar archivo
+            </button>
+        </div>
 
-            <div class="loading" id="loading">
-                <div class="loading-spinner"></div>
-                <span class="loading-text">Analizando imagen...</span>
-            </div>
+        <div id="previewContainer">
+            <img id="previewImage" alt="Vista previa">
+            <canvas id="annotationCanvas" style="position: absolute; pointer-events: none;"></canvas>
+        </div>
 
-            <div class="error" id="error"></div>
-            
-            <div id="result" class="result-container"></div>
-        </main>
+        <div style="text-align: center;">
+            <button class="btn" id="analyzeBtn" disabled onclick="analyzeImage()">
+                Analizar Radiografía
+            </button>
+        </div>
 
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-team">
-                    <p class="team-title">Equipo de Desarrollo:</p>
-                    <ul class="team-list">
-                        <li>Camilo Avila</li>
-                        <li>Fabio Villadiego</li>
-                        <li>Wilmer Orozco</li>
-                        <li>Daniel Hernandez</li>
-                    </ul>
-                </div>
-                <p class="copyright">© 2024 - Todos los derechos reservados</p>
-            </div>
-        </footer>
-    </div>
+        <div class="loading" id="loading">Analizando imagen...</div>
+        <div class="error" id="error"></div>
+        <div id="result"></div>
+    </main>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="script.js"></script>
+    <footer class="footer">
+        <p>Prototipo desarrollado por:</p>
+        <p class="team-members">
+            Camilo Avila • Fabio Villadiego • Wilmer Orozco • Daniel Hernandez
+        </p>
+        <p><small>© 2024 - Todos los derechos reservados</small></p>
+    </footer>
+
+    <script>
+        // Elementos del DOM
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const previewImage = document.getElementById('previewImage');
+        const previewContainer = document.getElementById('previewContainer');
+        const annotationCanvas = document.getElementById('annotationCanvas');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const result = document.getElementById('result');
+
+        // Prevenir comportamiento por defecto
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Efectos visuales durante el arrastre
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Manejar archivo subido
+        dropZone.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFileSelect, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        previewImage.onload = function() {
+                            annotationCanvas.width = previewImage.clientWidth;
+                            annotationCanvas.height = previewImage.clientHeight;
+                        };
+                        analyzeBtn.disabled = false;
+                        error.style.display = 'none';
+                        result.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showError('Por favor, selecciona un archivo de imagen válido.');
+                }
+            }
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+            analyzeBtn.disabled = true;
+            result.style.display = 'none';
+        }
+
+        function analyzeImage() {
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            error.style.display = 'none';
+
+            // Simulación de análisis
+            setTimeout(() => {
+                const ctx = annotationCanvas.getContext('2d');
+                ctx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+                
+                // Simular marcado de hallazgos
+                ctx.beginPath();
+                ctx.arc(annotationCanvas.width/2, annotationCanvas.height/2, 50, 0, 2 * Math.PI);
+                ctx.strokeStyle = '#dc1a5c';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                loading.style.display = 'none';
+                result.style.display = 'block';
+                result.innerHTML = `
+                    <h3>Resultados del análisis:</h3>
+                    <div style="margin: 1rem 0;">
+                        <h4>Hallazgos principales:</h4>
+                        <ul style="margin: 0.5rem 0 1rem 1.5rem;">
+                            <li>Opacidad focal en lóbulo superior derecho</li>
+                            <li>Patrón intersticial difuso</li>
+                            <li>Silueta cardíaca normal</li>
+                        </ul>
+                        
+                        <h4>Interpretación:</h4>
+                        <p style="margin: 0.5rem 0;">
+                            Los hallazgos sugieren un proceso infeccioso/inflamatorio en evolución. 
+                            Se recomienda correlación clínica y seguimiento radiológico.
+                        </p>
+                        
+                        <h4>Recomendaciones:</h4>
+                        <ul style="margin: 0.5rem 0 0 1.5rem;">
+                            <li>Control radiológico en 2 semanas</li>
+                            <li>Evaluación por neumología</li>
+                            <li>Considerar TC de tórax si no hay mejoría</li>
+                        </ul>
+                    </div>
+                `;
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
