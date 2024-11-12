@@ -4,43 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analizador de Radiografías de Tórax</title>
+    <!-- Fuentes -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4006/4006511.png">
 </head>
 <body>
+    <!-- Partículas de fondo -->
+    <div id="particles-js"></div>
+
     <div class="container">
-        <h1>Analizador de Radiografías de Tórax</h1>
-        
-        <div class="upload-section" id="dropZone">
-            <p>Arrastra una radiografía de tórax aquí o</p>
-            <input type="file" id="fileInput" accept="image/*" style="display: none;">
-            <button class="btn" onclick="document.getElementById('fileInput').click()">
-                Subir Imagen
-            </button>
-        </div>
+        <!-- Header con navegación -->
+        <nav class="nav-header">
+            <a href="/" class="nav-logo">
+                <img src="https://cdn-icons-png.flaticon.com/512/4006/4006511.png" alt="Logo" class="logo-img">
+                <span>AI Medical Analyzer</span>
+            </a>
+        </nav>
 
-        <div id="previewContainer">
-            <img id="previewImage" alt="Vista previa">
-            <canvas id="annotationCanvas"></canvas>
-        </div>
+        <main class="main-content">
+            <h1>Analizador de Radiografías de Tórax</h1>
+            <p class="subtitle">Sistema avanzado de análisis de imágenes médicas</p>
+            
+            <div class="upload-section" id="dropZone">
+                <div class="upload-icon">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2983/2983788.png" alt="Upload" class="upload-img">
+                </div>
+                <p class="upload-text">Arrastra una radiografía de tórax aquí o</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <button class="btn primary-btn" onclick="document.getElementById('fileInput').click()">
+                    <span class="btn-text">Subir Imagen</span>
+                </button>
+                <p class="upload-info">Formatos soportados: JPEG, PNG, DICOM</p>
+            </div>
 
-        <div style="text-align: center;">
-            <button class="btn" id="analyzeBtn" disabled onclick="analyzeImage()">
-                Analizar Radiografía
-            </button>
-        </div>
+            <div id="previewContainer" class="preview-container">
+                <img id="previewImage" alt="Vista previa" class="preview-image">
+                <canvas id="annotationCanvas" class="annotation-canvas"></canvas>
+            </div>
 
-        <div class="loading" id="loading"></div>
-        <div class="error" id="error"></div>
-        <div id="result"></div>
+            <div class="action-container">
+                <button class="btn analyze-btn" id="analyzeBtn" disabled onclick="analyzeImage()">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-text">Analizar Radiografía</span>
+                </button>
+            </div>
 
-        <div class="footer">
-            <p>Prototipo desarrollado por:</p>
-            <p>Camilo Avila • Fabio Villadiego • Wilmer Orozco • Daniel Hernandez</p>
-            <p><small>© 2024 - Todos los derechos reservados</small></p>
-        </div>
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Analizando imagen...</span>
+            </div>
+
+            <div class="error" id="error"></div>
+            
+            <div id="result" class="result-container"></div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-team">
+                    <p class="team-title">Equipo de Desarrollo:</p>
+                    <ul class="team-list">
+                        <li>Camilo Avila</li>
+                        <li>Fabio Villadiego</li>
+                        <li>Wilmer Orozco</li>
+                        <li>Daniel Hernandez</li>
+                    </ul>
+                </div>
+                <p class="copyright">© 2024 - Todos los derechos reservados</p>
+            </div>
+        </footer>
     </div>
 
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
