@@ -3,7 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Medical Analyzer</title>
+    <title>AI Medical Analyzer - Detección Avanzada</title>
+    
+    <!-- TensorFlow.js y modelos -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
+    <!-- Biblioteca de procesamiento de imágenes -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+
     <style>
         * {
             margin: 0;
@@ -49,21 +56,6 @@
             font-weight: bold;
         }
 
-        .title-container {
-            flex-grow: 1;
-        }
-
-        .main-title {
-            color: #333;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 1rem;
-        }
-
         .main-content {
             max-width: 1200px;
             margin: 2rem auto;
@@ -84,12 +76,6 @@
         .upload-section.dragover {
             border-color: #dc1a5c;
             background-color: #fff5f5;
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: #666;
-            margin-bottom: 1rem;
         }
 
         .btn {
@@ -115,6 +101,7 @@
         #previewContainer {
             display: none;
             margin: 2rem 0;
+            position: relative;
         }
 
         #previewImage {
@@ -124,19 +111,32 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
+        #annotationCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
         .loading {
             display: none;
             text-align: center;
             margin: 2rem 0;
         }
 
-        .error {
-            display: none;
-            color: #dc3545;
-            background: #fff5f5;
-            padding: 1rem;
-            border-radius: 5px;
-            margin: 1rem 0;
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #dc1a5c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         #result {
@@ -148,17 +148,33 @@
             margin-top: 2rem;
         }
 
+        .finding-item {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .confidence-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+        }
+
         .footer {
             background: white;
             padding: 2rem;
             text-align: center;
             margin-top: auto;
             box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-        }
-
-        .team-members {
-            color: #666;
-            margin: 1rem 0;
         }
     </style>
 </head>
@@ -168,16 +184,15 @@
             <div class="logo">
                 <div class="logo-cross">+</div>
             </div>
-            <div class="title-container">
-                <h1 class="main-title">AI Medical Analyzer</h1>
-                <p class="subtitle">Sistema avanzado de análisis de imágenes médicas</p>
+            <div>
+                <h1>AI Medical Analyzer</h1>
+                <p>Sistema avanzado de análisis de imágenes médicas</p>
             </div>
         </div>
     </header>
 
     <main class="main-content">
         <div class="upload-section" id="dropZone">
-            <div class="upload-icon">📤</div>
             <p>Arrastra una radiografía de tórax aquí o</p>
             <input type="file" id="fileInput" accept="image/*" style="display: none;">
             <button class="btn" onclick="document.getElementById('fileInput').click()">
@@ -187,7 +202,7 @@
 
         <div id="previewContainer">
             <img id="previewImage" alt="Vista previa">
-            <canvas id="annotationCanvas" style="position: absolute; pointer-events: none;"></canvas>
+            <canvas id="annotationCanvas"></canvas>
         </div>
 
         <div style="text-align: center;">
@@ -196,20 +211,57 @@
             </button>
         </div>
 
-        <div class="loading" id="loading">Analizando imagen...</div>
-        <div class="error" id="error"></div>
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Analizando imagen...</p>
+        </div>
+
         <div id="result"></div>
     </main>
 
     <footer class="footer">
         <p>Prototipo desarrollado por:</p>
-        <p class="team-members">
-            Camilo Avila • Fabio Villadiego • Andres Villadiego • Wilmer Orozco • Daniel Hernandez
-        </p>
+        <p>Camilo Avila • Fabio Villadiego • Wilmer Orozco • Daniel Hernandez</p>
         <p><small>© 2024 - Todos los derechos reservados</small></p>
     </footer>
 
     <script>
+        // Configuración inicial de TensorFlow.js
+        async function initializeTF() {
+            await tf.setBackend('webgl');
+            console.log('TensorFlow.js inicializado con backend:', tf.getBackend());
+        }
+        initializeTF();
+
+        // Sistema de detección de patologías
+        const pathologies = {
+            pneumonia: {
+                name: "Neumonía",
+                patterns: ["consolidación", "infiltrados"],
+                threshold: 0.7
+            },
+            pleural_effusion: {
+                name: "Derrame pleural",
+                patterns: ["opacidad", "borramiento"],
+                threshold: 0.75
+            },
+            cardiomegaly: {
+                name: "Cardiomegalia",
+                patterns: ["aumento cardíaco"],
+                threshold: 0.8
+            },
+            atelectasis: {
+                name: "Atelectasia",
+                patterns: ["colapso", "desplazamiento"],
+                threshold: 0.65
+            },
+            pneumothorax: {
+                name: "Neumotórax",
+                patterns: ["aire", "colapso pulmonar"],
+                threshold: 0.85
+            }
+        };
+
         // Elementos del DOM
         const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
@@ -218,10 +270,9 @@
         const annotationCanvas = document.getElementById('annotationCanvas');
         const analyzeBtn = document.getElementById('analyzeBtn');
         const loading = document.getElementById('loading');
-        const error = document.getElementById('error');
         const result = document.getElementById('result');
 
-        // Prevenir comportamiento por defecto
+        // Eventos de arrastre
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
@@ -232,7 +283,6 @@
             e.stopPropagation();
         }
 
-        // Efectos visuales durante el arrastre
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, highlight, false);
         });
@@ -249,7 +299,7 @@
             dropZone.classList.remove('dragover');
         }
 
-        // Manejar archivo subido
+        // Manejo de archivos
         dropZone.addEventListener('drop', handleDrop, false);
         fileInput.addEventListener('change', handleFileSelect, false);
 
@@ -277,67 +327,103 @@
                             annotationCanvas.height = previewImage.clientHeight;
                         };
                         analyzeBtn.disabled = false;
-                        error.style.display = 'none';
                         result.style.display = 'none';
                     };
                     reader.readAsDataURL(file);
                 } else {
-                    showError('Por favor, selecciona un archivo de imagen válido.');
+                    alert('Por favor, selecciona un archivo de imagen válido.');
                 }
             }
         }
 
-        function showError(message) {
-            error.textContent = message;
-            error.style.display = 'block';
-            analyzeBtn.disabled = true;
-            result.style.display = 'none';
-        }
-
-        function analyzeImage() {
+        // Análisis de imagen con TensorFlow.js
+        async function analyzeImage() {
             loading.style.display = 'block';
             result.style.display = 'none';
-            error.style.display = 'none';
+            analyzeBtn.disabled = true;
 
-            // Simulación de análisis
-            setTimeout(() => {
-                const ctx = annotationCanvas.getContext('2d');
-                ctx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+            try {
+                // Preparar la imagen para el análisis
+                const image = tf.browser.fromPixels(previewImage)
+                    .resizeNearestNeighbor([224, 224])
+                    .toFloat()
+                    .expandDims();
+
+                // Simular detección de patologías
+                const findings = await simulateAnalysis();
                 
-                // Simular marcado de hallazgos
+                // Mostrar resultados
+                displayResults(findings);
+            } catch (error) {
+                console.error('Error en el análisis:', error);
+                alert('Error al analizar la imagen. Por favor, intenta de nuevo.');
+            } finally {
+                loading.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        // Simulación de análisis con valores realistas
+        async function simulateAnalysis() {
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Simular tiempo de procesamiento
+
+            const findings = [];
+            for (const [key, pathology] of Object.entries(pathologies)) {
+                const confidence = Math.random();
+                if (confidence > pathology.threshold) {
+                    findings.push({
+                        name: pathology.name,
+                        confidence: confidence,
+                        patterns: pathology.patterns,
+                        location: {
+                            x: Math.random() * annotationCanvas.width,
+                            y: Math.random() * annotationCanvas.height,
+                            radius: 30 + Math.random() * 20
+                        }
+                    });
+                }
+            }
+            return findings;
+        }
+
+        // Visualización de resultados
+        function displayResults(findings) {
+            const ctx = annotationCanvas.getContext('2d');
+            ctx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+
+            // Dibujar marcadores
+            findings.forEach(finding => {
                 ctx.beginPath();
-                ctx.arc(annotationCanvas.width/2, annotationCanvas.height/2, 50, 0, 2 * Math.PI);
-                ctx.strokeStyle = '#dc1a5c';
+                ctx.arc(finding.location.x, finding.location.y, finding.location.radius, 0, 2 * Math.PI);
+                ctx.strokeStyle = 'rgba(220, 26, 92, 0.8)';
                 ctx.lineWidth = 3;
                 ctx.stroke();
+            });
 
-                loading.style.display = 'none';
-                result.style.display = 'block';
-                result.innerHTML = `
-                    <h3>Resultados del análisis:</h3>
-                    <div style="margin: 1rem 0;">
-                        <h4>Hallazgos principales:</h4>
-                        <ul style="margin: 0.5rem 0 1rem 1.5rem;">
-                            <li>Opacidad focal en lóbulo superior derecho</li>
-                            <li>Patrón intersticial difuso</li>
-                            <li>Silueta cardíaca normal</li>
-                        </ul>
-                        
-                        <h4>Interpretación:</h4>
-                        <p style="margin: 0.5rem 0;">
-                            Los hallazgos sugieren un proceso infeccioso/inflamatorio en evolución. 
-                            Se recomienda correlación clínica y seguimiento radiológico.
-                        </p>
-                        
-                        <h4>Recomendaciones:</h4>
-                        <ul style="margin: 0.5rem 0 0 1.5rem;">
-                            <li>Control radiológico en 2 semanas</li>
-                            <li>Evaluación por neumología</li>
-                            <li>Considerar TC de tórax si no hay mejoría</li>
-                        </ul>
+            // Generar reporte
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>Resultados del análisis:</h3>
+                ${findings.map(finding => `
+                    <div class="finding-item">
+                        <h4>${finding.name}</h4>
+                        <p>Patrones detectados: ${finding.patterns.join(', ')}</p>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${finding.confidence * 100}%"></div>
+                        </div>
+                        <p>Confianza: ${(finding.confidence * 100).toFixed(1)}%</p>
                     </div>
-                `;
-            }, 2000);
+                `).join('')}
+                ${findings.length === 0 ? '<p>No se detectaron anomalías significativas.</p>' : ''}
+                <div class="finding-item">
+                    <h4>Recomendaciones:</h4>
+                    <ul>
+                        <li>Consultar estos resultados con un profesional médico</li>
+                        <li>Considerar estudios complementarios según hallazgos</li>
+                        <li>Programar seguimiento según la severidad de los hallazgos</li>
+                    </ul>
+                </div>
+            `;
         }
     </script>
 </body>
