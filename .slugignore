@@ -1,5 +1,0 @@
-# .slugignore
-Chest X_Ray Dataset/
-raw/
-*.pt
-*.pth
