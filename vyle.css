@@ -1,0 +1,37 @@
+:root {
+    --primary-color: #2A5C82;
+    --secondary-color: #5BA4E6;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 20px;
+}
+
+.chat-container {
+    height: 500px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.diagnosis-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
