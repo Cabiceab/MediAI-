@@ -11,7 +11,6 @@
             --secondary: #4f46e5;
             --accent: #7c3aed;
         }
-
         .chat-container {
             height: 60vh;
             background: #f8fafc;
@@ -19,7 +18,6 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-
         .message {
             max-width: 80%;
             padding: 1rem;
@@ -27,30 +25,25 @@
             border-radius: 1rem;
             animation: fadeIn 0.3s ease;
         }
-
         .user-message {
             background: var(--primary);
             color: white;
             margin-left: auto;
         }
-
         .assistant-message {
             background: white;
             border: 1px solid #e2e8f0;
             margin-right: auto;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .diagnosis-card {
             transition: transform 0.2s;
             cursor: pointer;
             border: 1px solid #e2e8f0;
         }
-
         .diagnosis-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -63,7 +56,6 @@
             <h1 class="display-4 fw-bold text-primary">🩺 Vyle Medical AI</h1>
             <p class="lead text-muted">Asistente médico inteligente con DeepSeek</p>
         </div>
-
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="chat-container p-3">
@@ -82,7 +74,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-lg-4">
                 <div class="card h-100 border-0 shadow">
                     <div class="card-header bg-primary text-white">
@@ -99,13 +90,12 @@
             </div>
         </div>
     </div>
-
     <script>
         class MedicalAI {
             constructor() {
                 this.conversationHistory = [];
-                this.apiUrl = 'https://api.deepseek.com/v1/chat/completions';
-                this.apiKey = 'TU_API_KEY';  // Reemplazar con API key real
+                this.apiUrl = 'https://api.deepseek.com/v1/chat/completions'; // Replace with actual DeepSeek endpoint
+                this.apiKey = 'TU_API_KEY'; // Replace with your actual API key
             }
 
             async analyzeConversation(message) {
@@ -115,13 +105,14 @@
                 try {
                     const response = await this.getAIResponse(message);
                     const analysis = this.parseMedicalResponse(response);
-                    
+
                     this.addToHistory('assistant', analysis.text);
                     this.displayDiagnosis(analysis);
                 } catch (error) {
+                    console.error(error);
                     this.showError('Error al conectar con el servidor AI');
                 }
-                
+
                 this.showLoading(false);
             }
 
@@ -133,18 +124,25 @@
                         'Authorization': `Bearer ${this.apiKey}`
                     },
                     body: JSON.stringify({
-                        model: "deepseek-medical",
-                        messages: [{
-                            role: "system",
-                            content: "Eres un asistente médico especializado. Analiza los síntomas, genera posibles diagnósticos diferenciales y recomienda acciones. Usa marcado para organizar la información."
-                        }, {
-                            role: "user",
-                            content: prompt
-                        }],
+                        model: "deepseek-medical", // Replace with the correct model name
+                        messages: [
+                            {
+                                role: "system",
+                                content: "Eres un asistente médico especializado. Analiza los síntomas, genera posibles diagnósticos diferenciales y recomienda acciones. Usa marcado para organizar la información."
+                            },
+                            {
+                                role: "user",
+                                content: prompt
+                            }
+                        ],
                         temperature: 0.7,
                         max_tokens: 500
                     })
                 });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.statusText}`);
+                }
 
                 return await response.json();
             }
@@ -187,21 +185,21 @@
                 results.innerHTML = `
                     <div class="diagnosis-card p-3 mb-3 bg-white rounded">
                         <h5 class="text-primary">Diagnósticos Probables:</h5>
-                        ${analysis.diagnoses.map(d => `
+                        ${analysis.diagnoses.length > 0 ? analysis.diagnoses.map(d => `
                             <div class="d-flex justify-content-between mb-2">
                                 <span>${d.name}</span>
                                 <span class="badge bg-primary">${d.probability}</span>
                             </div>
-                        `).join('')}
+                        `).join('') : '<p class="text-muted">No se encontraron diagnósticos.</p>'}
                     </div>
                     <div class="diagnosis-card p-3 bg-white rounded">
                         <h5 class="text-success">Recomendaciones:</h5>
-                        ${analysis.recommendations.map(r => `
+                        ${analysis.recommendations.length > 0 ? analysis.recommendations.map(r => `
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-check-circle text-success me-2"></i>
                                 <span>${r.replace('✅', '').trim()}</span>
                             </div>
-                        `).join('')}
+                        `).join('') : '<p class="text-muted">No hay recomendaciones disponibles.</p>'}
                     </div>
                 `;
             }
@@ -220,9 +218,9 @@
             }
         }
 
-        // Inicialización
+        // Initialization
         const medicalAI = new MedicalAI();
-        
+
         document.getElementById('sendButton').addEventListener('click', () => {
             const input = document.getElementById('inputMessage');
             if (input.value.trim()) {
